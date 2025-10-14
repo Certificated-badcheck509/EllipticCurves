@@ -49,7 +49,7 @@ namespace EllipticCurves
         /// </summary>
         public BigRational(BigInteger num, BigInteger den)
         {
-            if (den.IsZero) throw new DivideByZeroException("Rational with zero denominator");
+            if (den.IsZero) throw new DivideByZeroException("Rational with zero denominator.");
 
             // Normalize zero as 0/1 immediately.
             if (num.IsZero)
