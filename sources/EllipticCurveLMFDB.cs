@@ -91,7 +91,7 @@ namespace EllipticCurves
             {
                 if (string.IsNullOrEmpty(Label))
                 {
-                    return string.Empty;
+                    return null;
                 }
                 return $"https://www.lmfdb.org/EllipticCurve/Q/{Label}/";
             }
