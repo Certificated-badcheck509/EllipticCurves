@@ -195,7 +195,11 @@ namespace EllipticCurves
             {
                 var row = data[i];
                 var ainvs = ParseAinvs(row.GetProperty("ainvs"));
-                var (c4C, c6C, dC) = InternalMath.InvariantsIntFromAinvs(ainvs);
+                var a1 = ainvs[0]; var a2 = ainvs[1]; 
+                var a3 = ainvs[2]; var a4 = ainvs[3]; 
+                var a6 = ainvs[4];
+
+                var (c4C, c6C, dC) = InternalMath.InvariantsIntFromAinvs(a1, a2, a3, a4, a6);
 
                 if (InternalMath.IsQIsomorphic(c4E, c6E, dE, c4C, c6C, dC, out _))
                 {

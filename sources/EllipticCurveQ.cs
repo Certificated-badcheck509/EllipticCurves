@@ -513,6 +513,37 @@ namespace EllipticCurves
 
         #endregion
 
+        #region IsIsomorphicQ
+
+        /// <summary>
+        /// Return true iff this curve is Q–isomorphic to <paramref name="other"/>.
+        /// Uses invariant scaling test (c4,c6,Δ) and outputs the scaling factor u (if requested).
+        /// </summary>
+        public bool IsIsomorphic(EllipticCurveQ other) => IsIsomorphic(other, out _);
+
+        /// <summary>
+        /// Return true iff this curve is Q–isomorphic to <paramref name="other"/>; also returns u s.t.
+        /// c4_this = u^4 c4_other, c6_this = u^6 c6_other, Δ_this = u^12 Δ_other.
+        /// </summary>
+        public bool IsIsomorphic(EllipticCurveQ other, out BigRational u)
+        {
+            if (other is null) throw new ArgumentNullException(nameof(other));
+            if (this.IsSingular || other.IsSingular)
+                throw new InvalidOperationException("Isomorphism test requires nonsingular curves (Δ ≠ 0).");
+
+            // “This” side (E): exact rationals
+            var c4E = this.C4;
+            var c6E = this.C6;
+            var dE = this.Discriminant;
+
+            // “Other” side (C): make an integral model by clearing denominators of a_i
+            var (c4C, c6C, dC) = InternalMath.IntegralInvariants(other);
+
+            return InternalMath.IsQIsomorphic(c4E, c6E, dE, c4C, c6C, dC, out u);
+        }
+
+        #endregion
+
         #region Overrides
 
         /// <summary>Pretty printer that omits zero terms and formats signs compactly.</summary>

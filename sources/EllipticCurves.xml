@@ -448,6 +448,18 @@
             Returns a label like "Z/1Z", "Z/4Z", or "Z/2Z x Z/4Z".
             </summary>
         </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.IsIsomorphic(EllipticCurves.EllipticCurveQ)">
+            <summary>
+            Return true iff this curve is Q–isomorphic to <paramref name="other"/>.
+            Uses invariant scaling test (c4,c6,Δ) and outputs the scaling factor u (if requested).
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.IsIsomorphic(EllipticCurves.EllipticCurveQ,EllipticCurves.BigRational@)">
+            <summary>
+            Return true iff this curve is Q–isomorphic to <paramref name="other"/>; also returns u s.t.
+            c4_this = u^4 c4_other, c6_this = u^6 c6_other, Δ_this = u^12 Δ_other.
+            </summary>
+        </member>
         <member name="M:EllipticCurves.EllipticCurveQ.ToString">
             <summary>Pretty printer that omits zero terms and formats signs compactly.</summary>
         </member>
@@ -488,10 +500,16 @@
               `new int[] { 2, 3, ... }`.
             </summary>
         </member>
-        <member name="M:EllipticCurves.InternalMath.InvariantsIntFromAinvs(System.Numerics.BigInteger[])">
+        <member name="M:EllipticCurves.InternalMath.InvariantsIntFromAinvs(System.Numerics.BigInteger,System.Numerics.BigInteger,System.Numerics.BigInteger,System.Numerics.BigInteger,System.Numerics.BigInteger)">
             <summary>
             Compute integral invariants (c4, c6, Δ) from integral a-invariants [a1,a2,a3,a4,a6].
             Assumes all inputs are integers (integral model). No normalization/scaling is applied here.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.IntegralInvariants(EllipticCurves.EllipticCurveQ)">
+            <summary>
+            Build an integral Weierstrass model of curve C by the scaling (x,y) = (L^2 X, L^3 Y),
+            where L = lcm(denominators of a_i). Returns the integer invariants (c4,c6,Δ).
             </summary>
         </member>
         <member name="M:EllipticCurves.InternalMath.IsQIsomorphic(EllipticCurves.BigRational,EllipticCurves.BigRational,EllipticCurves.BigRational,System.Numerics.BigInteger,System.Numerics.BigInteger,System.Numerics.BigInteger,EllipticCurves.BigRational@)">

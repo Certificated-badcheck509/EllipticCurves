@@ -37,5 +37,6 @@ public static class Program
         Console.WriteLine($"Rank(E) = {E_LMFDB.Rank}");
         Console.WriteLine($"Analytic rank(E) = {E_LMFDB.AnalyticRank}");
         Console.WriteLine($"Cond(E) = {E_LMFDB.Conductor}");
+        Console.WriteLine($"Isomorphic to E: {E.IsIsomorphic(E_LMFDB.GlobalMinimalModel)}");
     }
 }

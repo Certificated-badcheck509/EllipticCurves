@@ -31,9 +31,9 @@ namespace EllipticCurves
         /// Compute integral invariants (c4, c6, Δ) from integral a-invariants [a1,a2,a3,a4,a6].
         /// Assumes all inputs are integers (integral model). No normalization/scaling is applied here.
         /// </summary>
-        public static (BigInteger c4, BigInteger c6, BigInteger Delta) InvariantsIntFromAinvs(BigInteger[] a)
+        public static (BigInteger c4, BigInteger c6, BigInteger Delta) InvariantsIntFromAinvs(BigInteger a1, 
+            BigInteger a2, BigInteger a3, BigInteger a4, BigInteger a6)
         {
-            var a1 = a[0]; var a2 = a[1]; var a3 = a[2]; var a4 = a[3]; var a6 = a[4];
             BigInteger b2 = a1 * a1 + 4 * a2;
             BigInteger b4 = 2 * a4 + a1 * a3;
             BigInteger b6 = a3 * a3 + 4 * a6;
@@ -45,13 +45,40 @@ namespace EllipticCurves
         }
 
         /// <summary>
+        /// Build an integral Weierstrass model of curve C by the scaling (x,y) = (L^2 X, L^3 Y),
+        /// where L = lcm(denominators of a_i). Returns the integer invariants (c4,c6,Δ).
+        /// </summary>
+        public static (BigInteger c4, BigInteger c6, BigInteger Delta) IntegralInvariants(EllipticCurveQ C)
+        {
+            // L = lcm of denominators of a1..a6
+            BigInteger L = InternalMath.Lcm(C.A1.Den,
+                           InternalMath.Lcm(C.A2.Den,
+                           InternalMath.Lcm(C.A3.Den,
+                           InternalMath.Lcm(C.A4.Den, C.A6.Den))));
+
+            // a_i' = L^i * a_i  (become integers)
+            BigInteger L1 = L;
+            BigInteger L2 = BigInteger.Pow(L, 2);
+            BigInteger L3 = BigInteger.Pow(L, 3);
+            BigInteger L4 = BigInteger.Pow(L, 4);
+            BigInteger L6 = BigInteger.Pow(L, 6);
+
+            BigInteger al1 = C.A1.Num * L1 / C.A1.Den;
+            BigInteger al2 = C.A2.Num * L2 / C.A2.Den;
+            BigInteger al3 = C.A3.Num * L3 / C.A3.Den;
+            BigInteger al4 = C.A4.Num * L4 / C.A4.Den;
+            BigInteger al6 = C.A6.Num * L6 / C.A6.Den;
+
+            return InternalMath.InvariantsIntFromAinvs(al1, al2, al3, al4, al6);
+        }
+
+        /// <summary>
         /// Check whether two elliptic curves are Q–isomorphic by testing the scaling
         /// relations on invariants: c4_E = u^4 c4_C, c6_E = u^6 c6_C, Δ_E = u^12 Δ_C for some u ∈ ℚ.
         /// Outputs the scaling factor u if successful.
         /// </summary>
-        public static bool IsQIsomorphic(BigRational c4E, BigRational c6E, BigRational dE,
-                                         BigInteger c4C, BigInteger c6C, BigInteger dC,
-                                         out BigRational u)
+        public static bool IsQIsomorphic(BigRational c4E, BigRational c6E, BigRational dE, 
+            BigInteger c4C, BigInteger c6C, BigInteger dC, out BigRational u)
         {
             u = default;
             var rc4C = new BigRational(c4C);
