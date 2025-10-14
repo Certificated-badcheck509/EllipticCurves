@@ -150,6 +150,9 @@ namespace EllipticCurves
         /// <summary>Point doubling: 2P = P + P.</summary>
         public EllipticCurvePoint Double(EllipticCurvePoint P) => Add(P, P);
 
+        /// <summary>Point subtraction: P − Q = P + (−Q).</summary>
+        public EllipticCurvePoint Subtract(EllipticCurvePoint P, EllipticCurvePoint Q) => Add(P, Negate(Q));
+
         /// <summary>
         /// Scalar multiplication nP using left-to-right double-and-add.
         /// Supports n &lt; 0 (via negation) and n = 0 (returns O).
@@ -440,6 +443,38 @@ namespace EllipticCurves
 
                 return torsionPoints;
             }
+        }
+
+        /// <summary>
+        /// True iff the given point lies on the curve and is torsion (order &lt; ∞).
+        /// </summary>
+        public bool IsTorsionPoint(EllipticCurvePoint P)
+        {
+            if (!IsOnCurve(P)) throw new ArgumentException("Point is not on this curve.", nameof(P));
+            _ = TorsionPoints; // ensure cache is built
+            return torsionPoints.Contains(P);
+        }
+
+        /// <summary>
+        /// Return the exact order of a torsion point or <c>null</c> if it has infinite order.
+        /// The point must lie on the curve; Infinity is treated as order 1.
+        /// </summary>
+        public int? TorsionOrder(EllipticCurvePoint P)
+        {
+            if (!IsOnCurve(P)) throw new ArgumentException("Point is not on this curve.", nameof(P));
+            if (P.IsInfinity) return 1;
+
+            _ = TorsionPoints; // ensure cache is built
+            if (!torsionPoints.Contains(P)) return null;
+
+            var multiple = P;
+            for (int n = 1; n <= torsionPoints.Count; n++)
+            {
+                if (multiple.IsInfinity) return n;
+                multiple = Add(multiple, P);
+            }
+
+            throw new InvalidOperationException("Failed to determine torsion order for the given point.");
         }
 
         /// <summary>
