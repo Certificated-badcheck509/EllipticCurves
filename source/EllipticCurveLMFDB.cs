@@ -7,59 +7,87 @@ using System.Text.Json;
 
 namespace EllipticCurves
 {
+    /// <summary>
+    /// Thin helper that fetches basic invariants for an elliptic curve over ℚ from the LMFDB API,
+    /// matching by the exact rational j-invariant and verifying Q–isomorphism via (c4,c6,Δ).
+    /// 
+    /// Design:
+    ///  • Single network call to <c>/api/ec_curvedata</c> (no secondary requests).
+    ///  • Minimal local cache of the selected record (a-invariants, conductor, rank, etc.).
+    ///  • No retries/backoff: the caller controls lifetime by constructing a new instance.
+    /// 
+    /// Safety:
+    ///  • Throws <see cref="InvalidOperationException"/> when the record is not initialized
+    ///    or if no Q–isomorphic curve is found for the given j-invariant.
+    /// </summary>
     public sealed partial class EllipticCurveLMFDB
     {
-        public EllipticCurveLMFDB(EllipticCurveQ ellipticCurve) 
+        /// <summary>
+        /// Construct and immediately fetch/cached the matching LMFDB record
+        /// for <paramref name="ellipticCurve"/> (matching by j-invariant and Q–isomorphism).
+        /// </summary>
+        public EllipticCurveLMFDB(EllipticCurveQ ellipticCurve)
         {
             GetLmfdbRecord(ellipticCurve);
         }
 
         #region Properties
 
+        /// <summary>
+        /// Algebraic rank (Mordell–Weil rank) from LMFDB curvedata.
+        /// </summary>
         public int Rank
         {
             get
             {
                 if (!_lmfdbCache.HasValue)
                     throw new InvalidOperationException();
-
                 return _lmfdbCache.Value.rank;
             }
         }
 
+        /// <summary>
+        /// Analytic rank (ord_{s=1} L(E,s)) when present in LMFDB; otherwise <c>null</c>.
+        /// </summary>
         public int? AnalyticRank
         {
             get
             {
                 if (!_lmfdbCache.HasValue)
                     throw new InvalidOperationException();
-
                 return _lmfdbCache.Value.analyticRank;
             }
         }
 
+        /// <summary>
+        /// Conductor N of the (minimal) elliptic curve over ℚ.
+        /// </summary>
         public BigInteger Conductor
         {
             get
             {
                 if (!_lmfdbCache.HasValue)
                     throw new InvalidOperationException();
-
                 return _lmfdbCache.Value.conductor;
             }
         }
 
+        /// <summary>
+        /// LMFDB label (e.g. <c>"48.a3"</c>) of the matched minimal model.
+        /// </summary>
         public string Label
         {
             get
             {
                 if (!_lmfdbCache.HasValue)
                     throw new InvalidOperationException();
-
                 return _lmfdbCache.Value.label;
             }
         }
 
+        /// <summary>
+        /// Canonical human-facing LMFDB URL of the curve's page (or empty string if label is missing).
+        /// </summary>
         public string Url
         {
             get
@@ -68,22 +96,26 @@ namespace EllipticCurves
                 {
                     return string.Empty;
                 }
-
                 return $"https://www.lmfdb.org/EllipticCurve/Q/{Label}/";
             }
         }
 
+        /// <summary>
+        /// Torsion structure in a compact textual form, e.g. <c>"Z/2Z"</c> or <c>"Z/2Z x Z/4Z"</c>.
+        /// </summary>
         public string TorsionStructure
         {
             get
             {
                 if (!_lmfdbCache.HasValue)
                     throw new InvalidOperationException();
-
                 return _lmfdbCache.Value.torsionStructure;
             }
         }
 
+        /// <summary>
+        /// Minimal (global) integral Weierstrass model reconstructed from the a-invariants in LMFDB.
+        /// </summary>
         public EllipticCurveQ GlobalMinimalModel
         {
             get
@@ -103,20 +135,31 @@ namespace EllipticCurves
 
         #region Private methods
 
-        // --- LMFDB cache (ainvs, conductor, rank) ---
-        private (BigInteger[] ainvs, 
-            BigInteger conductor, 
-            int rank, 
+        // --- Local cache of a single curvedata record ---
+        // Stored fields:
+        //  • ainvs: minimal integral a-invariants [a1,a2,a3,a4,a6]
+        //  • conductor: N
+        //  • rank: algebraic rank
+        //  • analyticRank: analytic rank if present (nullable)
+        //  • label: LMFDB label (used for links)
+        //  • torsionStructure: textual "Z/nZ" or "Z/aZ x Z/bZ" form
+        private (BigInteger[] ainvs,
+            BigInteger conductor,
+            int rank,
             int? analyticRank,
             string label,
             string torsionStructure)? _lmfdbCache;
 
-        // --- Core: fetch from LMFDB by exact j-invariant and match Q-isomorphism ---
+        /// <summary>
+        /// Fetch a list of candidates by exact rational j-invariant, then select the unique
+        /// curve Q–isomorphic to <paramref name="ellipticCurve"/> by verifying (c4,c6,Δ) scaling.
+        /// Caches the selected record; subsequent property reads are served from the cache.
+        /// </summary>
         private void GetLmfdbRecord(EllipticCurveQ ellipticCurve)
         {
             if (_lmfdbCache.HasValue) return;
 
-            // 1) Build URL by exact rational j-invariant (e.g. "1556068/81")
+            // 1) Build the API URL: jinv is a numeric[] [num,den], queried as "li<num>,<den>"
             var jinv = ellipticCurve.JInvariant; // BigRational (exact)
             string jnum = jinv.Num.ToString(CultureInfo.InvariantCulture);
             string jden = jinv.Den.ToString(CultureInfo.InvariantCulture);
@@ -125,9 +168,10 @@ namespace EllipticCurves
                 "&_format=json" +
                 "&_fields=ainvs,conductor,rank,analytic_rank,iso_nlabel,torsion_structure,lmfdb_label";
 
-            // 2) Query LMFDB
+            // 2) Perform HTTP GET (single-shot; the caller controls object lifetime)
             using var httpClient = new HttpClient();
             httpClient.Timeout = new TimeSpan(0, 0, 10);
+            // Use a common browser UA to avoid any strict filters in frontends
             httpClient.DefaultRequestHeaders.Add(
                 "User-Agent",
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36");
@@ -139,12 +183,12 @@ namespace EllipticCurves
             if (!doc.RootElement.TryGetProperty("data", out var data) || data.ValueKind != JsonValueKind.Array)
                 throw new InvalidOperationException("LMFDB: unexpected response format");
 
-            // Invariants (as rationals)
+            // Local invariants for Q–isomorphism validation
             var c4E = ellipticCurve.C4;
             var c6E = ellipticCurve.C6;
             var dE = ellipticCurve.Discriminant;
 
-            // 3) Scan candidates and pick Q-isomorphic one
+            // 3) Iterate candidates and select the one Q–isomorphic to the input curve
             for (int i = 0; i < data.GetArrayLength(); i++)
             {
                 var row = data[i];
@@ -155,11 +199,12 @@ namespace EllipticCurves
                 {
                     var conductor = ReadBigInteger(row.GetProperty("conductor"));
                     var rank = row.GetProperty("rank").GetInt32();
+                    // analytic_rank may be absent or null for some entries
                     int? analyticRank = row.TryGetProperty("analytic_rank", out var arEl) ? arEl.GetInt32() : null;
                     var lmfdb_label = row.GetProperty("lmfdb_label").GetString();
-                    var torsionStructure = FormatTorsionStructure(row.GetProperty("torsion_structure"));
+                    var torsionStruct = FormatTorsionStructure(row.GetProperty("torsion_structure"));
 
-                    _lmfdbCache = (ainvs, conductor, rank, analyticRank, lmfdb_label, torsionStructure);
+                    _lmfdbCache = (ainvs, conductor, rank, analyticRank, lmfdb_label, torsionStruct);
                     return;
                 }
             }
@@ -167,7 +212,10 @@ namespace EllipticCurves
             throw new InvalidOperationException("LMFDB: no Q-isomorphic curve found for this j-invariant");
         }
 
-        // Accepts: JSON array like [2,4] or a ready string like "Z/2Z x Z/4Z"
+        /// <summary>
+        /// Accepts either an integer array (e.g. [2,4]) or a ready string (e.g. "Z/2Z x Z/4Z")
+        /// and returns a normalized textual form "Z/nZ" or "Z/aZ x Z/bZ".
+        /// </summary>
         private static string FormatTorsionStructure(JsonElement el)
         {
             if (el.ValueKind == JsonValueKind.Array)
@@ -197,9 +245,14 @@ namespace EllipticCurves
         }
 
         // ---- Helpers (parsing + invariants + Q-isomorphism check) ----
+
+        /// <summary>
+        /// Parse a-invariants from LMFDB payload. Supports either a JSON array of numbers
+        /// or a string form "[a1,a2,a3,a4,a6]".
+        /// </summary>
         private static BigInteger[] ParseAinvs(JsonElement el)
         {
-            // LMFDB returns ainvs either as array or as string "[a1,a2,a3,a4,a6]"
+            // Common case: an array of numbers
             if (el.ValueKind == JsonValueKind.Array)
             {
                 var a = new BigInteger[5];
@@ -208,6 +261,7 @@ namespace EllipticCurves
                 return a;
             }
 
+            // Fallback: legacy string representation "[a1,a2,a3,a4,a6]"
             if (el.ValueKind == JsonValueKind.String)
             {
                 var s = el.GetString() ?? throw new FormatException("LMFDB: ainvs is null string");
@@ -227,7 +281,9 @@ namespace EllipticCurves
             throw new FormatException("LMFDB: unexpected ainvs type");
         }
 
-        // ---- Helpers (parse BigInteger) ----
+        /// <summary>
+        /// Parse a BigInteger from either a numeric JSON token or a string token.
+        /// </summary>
         private static BigInteger ReadBigInteger(JsonElement el)
         {
             return el.ValueKind switch

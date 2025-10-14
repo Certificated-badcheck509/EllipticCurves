@@ -3,30 +3,70 @@
 namespace EllipticCurves
 {
     /// <summary>
-    /// Point on an elliptic curve over Q in affine coords.
+    /// Immutable affine point on an elliptic curve over <c>ℚ</c> (the rationals).
+    /// 
+    /// <para>
+    /// Representation:
+    /// <list type="bullet">
+    ///   <item><description>Finite points are stored as exact rationals <see cref="X"/>, <see cref="Y"/> with <see cref="IsInfinity"/> = <c>false</c>.</description></item>
+    ///   <item><description>The neutral element (point at infinity) is represented canonically by <see cref="Infinity"/> with <see cref="IsInfinity"/> = <c>true</c> and <see cref="X"/>=<see cref="Y"/>=<c>0</c>.</description></item>
+    /// </list>
+    /// </para>
+    /// 
+    /// <para>
+    /// Equality and hashing follow value semantics:
+    /// two finite points are equal iff both coordinates are equal as rationals; the
+    /// infinity point is only equal to itself.
+    /// </para>
     /// </summary>
     public readonly struct EllipticCurvePoint : IEquatable<EllipticCurvePoint>
     {
+        /// <summary>
+        /// Affine <c>x</c>-coordinate (exact rational). For <see cref="Infinity"/>, this is <c>0</c>.
+        /// </summary>
         public readonly BigRational X;
 
+        /// <summary>
+        /// Affine <c>y</c>-coordinate (exact rational). For <see cref="Infinity"/>, this is <c>0</c>.
+        /// </summary>
         public readonly BigRational Y;
 
+        /// <summary>
+        /// Indicates whether the point is the neutral element (the point at infinity).
+        /// </summary>
         public readonly bool IsInfinity;
 
+        /// <summary>
+        /// Create a finite point with given affine coordinates <paramref name="x"/>, <paramref name="y"/>.
+        /// </summary>
         public EllipticCurvePoint(BigRational x, BigRational y) { X = x; Y = y; IsInfinity = false; }
 
+        /// <summary>
+        /// Private constructor used to create the canonical infinity element.
+        /// </summary>
         private EllipticCurvePoint(bool inf) { X = BigRational.Zero; Y = BigRational.Zero; IsInfinity = inf; }
 
+        /// <summary>
+        /// The neutral element of the elliptic curve group (point at infinity).
+        /// </summary>
         public static EllipticCurvePoint Infinity => new EllipticCurvePoint(true);
 
+        /// <summary>
+        /// Value equality: finite points compare by coordinates; infinity compares only to infinity.
+        /// </summary>
         public bool Equals(EllipticCurvePoint other)
         {
             if (IsInfinity || other.IsInfinity) return IsInfinity == other.IsInfinity;
             return X == other.X && Y == other.Y;
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object obj) => obj is EllipticCurvePoint p && Equals(p);
 
+        /// <summary>
+        /// Hash code consistent with <see cref="Equals(EllipticCurvePoint)"/>.
+        /// Combines <see cref="X"/>, <see cref="Y"/> and <see cref="IsInfinity"/>.
+        /// </summary>
         public override int GetHashCode()
         {
             unchecked
@@ -39,6 +79,10 @@ namespace EllipticCurves
             }
         }
 
+        /// <summary>
+        /// Human-readable representation: <c>"O"</c> for infinity; <c>"(x, y)"</c> for finite points.
+        /// Uses <see cref="BigRational.ToString()"/> for coordinates (culture-invariant).
+        /// </summary>
         public override string ToString() => IsInfinity ? "O" : $"({X}, {Y})";
     }
 }

@@ -7,22 +7,34 @@ using System.Text;
 namespace EllipticCurves
 {
     /// <summary>
-    /// Elliptic curve over Q in the general Weierstrass form:
-    /// y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6
-    /// All coefficients are exact rationals.
+    /// Elliptic curve over ℚ in the general Weierstrass form
+    ///     y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6 .
+    /// All coefficients are exact rationals (BigRational). This type implements:
+    ///  • exact invariants (b2,b4,b6,b8), c4, c6, Δ, j,
+    ///  • the general Weierstrass group law (Add/Double/Multiply),
+    ///  • conversion to the short model y^2 = x^3 + A x + B in characteristic 0,
+    ///  • bounded search for rational/integral points,
+    ///  • a self-contained computation of torsion points over ℚ
+    ///    (via Lutz–Nagell + reductions), including mapping back to the original model.
     /// </summary>
     public sealed partial class EllipticCurveQ
     {
+        /// <summary>a1 coefficient in the general Weierstrass equation.</summary>
         public BigRational A1 { get; }
 
+        /// <summary>a2 coefficient in the general Weierstrass equation.</summary>
         public BigRational A2 { get; }
 
+        /// <summary>a3 coefficient in the general Weierstrass equation.</summary>
         public BigRational A3 { get; }
 
+        /// <summary>a4 coefficient in the general Weierstrass equation.</summary>
         public BigRational A4 { get; }
 
+        /// <summary>a6 coefficient in the general Weierstrass equation.</summary>
         public BigRational A6 { get; }
 
+        /// <summary>Create an elliptic curve y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6.</summary>
         public EllipticCurveQ(BigRational a1, BigRational a2, BigRational a3, BigRational a4, BigRational a6)
         {
             A1 = a1; A2 = a2; A3 = a3; A4 = a4; A6 = a6;
@@ -30,23 +42,32 @@ namespace EllipticCurves
 
         #region Invariants (b2, b4, b6, b8), c4, c6, discriminant, j-invariant
 
+        /// <summary>b2 = a1^2 + 4 a2.</summary>
         public BigRational B2 => A1 * A1 + BigRational.FromInt(4) * A2;
 
+        /// <summary>b4 = 2 a4 + a1 a3.</summary>
         public BigRational B4 => BigRational.FromInt(2) * A4 + A1 * A3;
 
+        /// <summary>b6 = a3^2 + 4 a6.</summary>
         public BigRational B6 => A3 * A3 + BigRational.FromInt(4) * A6;
 
+        /// <summary>b8 = a1^2 a6 + 4 a2 a6 − a1 a3 a4 + a2 a3^2 − a4^2.</summary>
         public BigRational B8 => A1 * A1 * A6 + BigRational.FromInt(4) * A2 * A6 - A1 * A3 * A4 + A2 * A3 * A3 - A4 * A4;
 
+        /// <summary>c4 = b2^2 − 24 b4.</summary>
         public BigRational C4 => B2 * B2 - BigRational.FromInt(24) * B4;
 
+        /// <summary>c6 = −b2^3 + 36 b2 b4 − 216 b6.</summary>
         public BigRational C6 => -B2 * B2 * B2 + BigRational.FromInt(36) * B2 * B4 - BigRational.FromInt(216) * B6;
 
+        /// <summary>
+        /// Discriminant Δ = −b2^2 b8 − 8 b4^3 − 27 b6^2 + 9 b2 b4 b6.
+        /// The curve is nonsingular iff Δ ≠ 0.
+        /// </summary>
         public BigRational Discriminant
         {
             get
             {
-                // Δ = -b2^2*b8 - 8*b4^3 - 27*b6^2 + 9*b2*b4*b6
                 var t1 = -(B2 * B2) * B8;
                 var t2 = -BigRational.FromInt(8) * B4 * B4 * B4;
                 var t3 = -BigRational.FromInt(27) * B6 * B6;
@@ -55,49 +76,58 @@ namespace EllipticCurves
             }
         }
 
+        /// <summary>j-invariant j = c4^3 / Δ (only defined if Δ ≠ 0).</summary>
         public BigRational JInvariant
         {
             get
             {
                 var delta = Discriminant;
-
                 if (delta.IsZero) throw new InvalidOperationException("Singular curve: discriminant = 0");
-
                 var c4val = C4;
-                return c4val * c4val * c4val / delta; // j = c4^3 / Δ
+                return c4val * c4val * c4val / delta;
             }
         }
 
+        /// <summary>True iff the curve is singular (Δ = 0).</summary>
         public bool IsSingular => Discriminant.IsZero;
 
         #endregion
 
         #region Curve membership and group law (general Weierstrass formulas)
 
+        /// <summary>Exact membership test for a point in affine coordinates.</summary>
         public bool IsOnCurve(EllipticCurvePoint P)
         {
             if (P.IsInfinity) return true;
             var x = P.X; var y = P.Y;
-            // y^2 + a1*x*y + a3*y  ?=  x^3 + a2*x^2 + a4*x + a6
             var lhs = y * y + A1 * x * y + A3 * y;
             var rhs = x * x * x + A2 * x * x + A4 * x + A6;
             return lhs == rhs;
         }
 
+        /// <summary>Group inverse: −(x,y) = (x, −y − a1 x − a3).</summary>
         public EllipticCurvePoint Negate(EllipticCurvePoint P)
         {
             if (P.IsInfinity) return P;
-            // Negation formula for general Weierstrass: if (x,y) is on E, then
-            // -(x,y) = (x, -y - a1*x - a3)
             return new EllipticCurvePoint(P.X, -(P.Y + A1 * P.X + A3));
         }
 
+        /// <summary>
+        /// Group law (general Weierstrass). Handles P, Q, doubling, and the vertical-tangent case.
+        /// Slope:
+        ///  • If x1 ≠ x2: λ = (y2 − y1)/(x2 − x1).
+        ///  • If P = Q:   λ = (3x1^2 + 2a2 x1 + a4 − a1 y1) / (2y1 + a1 x1 + a3).
+        /// Then:
+        ///  x3 = λ^2 + a1 λ − a2 − x1 − x2,
+        ///  ν = y1 − λ x1,
+        ///  y3 = −(λ + a1) x3 − a3 − ν.
+        /// </summary>
         public EllipticCurvePoint Add(EllipticCurvePoint P, EllipticCurvePoint Q)
         {
             if (P.IsInfinity) return Q;
             if (Q.IsInfinity) return P;
 
-            // P == -Q ?
+            // P == −Q ?
             if (P.X == Q.X && P.Y + Q.Y + A1 * Q.X + A3 == BigRational.Zero)
                 return EllipticCurvePoint.Infinity;
 
@@ -112,19 +142,23 @@ namespace EllipticCurves
                         + BigRational.FromInt(2) * A2 * P.X
                         + A4 - A1 * P.Y;
                 var den = BigRational.FromInt(2) * P.Y + A1 * P.X + A3;
-                if (den.IsZero) return EllipticCurvePoint.Infinity;
+                if (den.IsZero) return EllipticCurvePoint.Infinity; // vertical tangent
                 lambda = num / den;
             }
 
             var x3 = lambda * lambda + A1 * lambda - A2 - P.X - Q.X;
             var nu = P.Y - lambda * P.X;
             var y3 = -(lambda + A1) * x3 - A3 - nu;
-
             return new EllipticCurvePoint(x3, y3);
         }
 
+        /// <summary>Point doubling: 2P = P + P.</summary>
         public EllipticCurvePoint Double(EllipticCurvePoint P) => Add(P, P);
 
+        /// <summary>
+        /// Scalar multiplication nP using left-to-right double-and-add.
+        /// Supports n &lt; 0 (via negation) and n = 0 (returns O).
+        /// </summary>
         public EllipticCurvePoint Multiply(EllipticCurvePoint P, BigInteger n)
         {
             if (n.Sign == 0) return EllipticCurvePoint.Infinity;
@@ -145,23 +179,27 @@ namespace EllipticCurves
 
         #region Short Weierstrass reduction: y^2 = x^3 + A x + B
 
+        /// <summary>
+        /// Convert to the short Weierstrass model in characteristic 0.
+        /// Steps:
+        ///  1) Complete the square: y = y' − (a1 x + a3)/2 ⇒ y'^2 = x^3 + a2' x^2 + a4' x + a6'
+        ///  2) Remove x^2-term:    x = X − a2'/3          ⇒ y'^2 = X^3 + A X + B
+        /// Returns a curve with (a1,a2,a3) = (0,0,0) and (a4,a6) = (A,B).
+        /// </summary>
         public EllipticCurveQ ShortWeierstrass
         {
             get
             {
-                // Short Weierstrass model y^2 = x^3 + A x + B returned as an EllipticCurveQ
-                // Step 1: y = y' - (a1*x + a3)/2  →  y'^2 = x^3 + a2' x^2 + a4' x + a6'
                 var s1 = A1 / BigRational.FromInt(2);
                 var s3 = A3 / BigRational.FromInt(2);
                 var a2p = A2 + s1 * s1;                              // a2'
                 var a4p = A4 + BigRational.FromInt(2) * s1 * s3;     // a4'
                 var a6p = A6 + s3 * s3;                              // a6'
 
-                // Step 2: x = X - a2'/3  →  y'^2 = X^3 + A X + B
                 var A = a4p - a2p * a2p / BigRational.FromInt(3);
-                var B = a6p - a2p * a4p / BigRational.FromInt(3) + BigRational.FromInt(2) * a2p * a2p * a2p / BigRational.FromInt(27);
+                var B = a6p - a2p * a4p / BigRational.FromInt(3)
+                             + BigRational.FromInt(2) * a2p * a2p * a2p / BigRational.FromInt(27);
 
-                // Short Weierstrass curve has a1=a2=a3=0, a4=A, a6=B
                 return new EllipticCurveQ(
                     BigRational.Zero,
                     BigRational.Zero,
@@ -172,6 +210,11 @@ namespace EllipticCurves
             }
         }
 
+        /// <summary>
+        /// Enumerate rational points with bounded x = m/n (|m| ≤ numMax, 1 ≤ n ≤ denMax, gcd(m,n)=1).
+        /// Uses the substitution y' = y + (a1 x + a3)/2 to test y'^2 being a rational square.
+        /// Returns O first, then affine points found in the box.
+        /// </summary>
         public IEnumerable<EllipticCurvePoint> RationalPoints(int numMax, int denMax)
         {
             yield return EllipticCurvePoint.Infinity;
@@ -186,11 +229,11 @@ namespace EllipticCurves
 
                     var x = new BigRational(m, n);
 
-                    // t = a1*x + a3,  S(x) = RHS + (t^2)/4  (RHS = x^3 + a2*x^2 + a4*x + a6)
+                    // S(x) = x^3 + a2 x^2 + a4 x + a6 + ((a1 x + a3)^2)/4  must be a rational square
                     var t = A1 * x + A3;
                     var rhs = x * x * x + A2 * x * x + A4 * x + A6 + t * t / BigRational.FromInt(4);
 
-                    if (BigRational.IsSquare(rhs, out var yp)) // yp = sqrt(S) in Q
+                    if (BigRational.IsSquare(rhs, out var yp))
                     {
                         var y1 = yp - t / two;
                         var y2 = (-yp) - t / two;
@@ -208,6 +251,10 @@ namespace EllipticCurves
             }
         }
 
+        /// <summary>
+        /// Enumerate integral points with |x| ≤ xmax (a thin wrapper over RationalPoints with denMax=1).
+        /// Returns O first, then affine integral points.
+        /// </summary>
         public IEnumerable<EllipticCurvePoint> IntegralPoints(int xmax)
         {
             return RationalPoints(xmax, 1);
@@ -217,8 +264,18 @@ namespace EllipticCurves
 
         #region Torsion structure
 
+        // Cached torsion set in ORIGINAL coordinates (including Infinity).
         private HashSet<EllipticCurvePoint> torsionPoints;
 
+        /// <summary>
+        /// Compute (and cache) the full set of rational torsion points of E(ℚ).
+        /// Pipeline (no LMFDB):
+        ///  0) Convert to short integral model Y^2 = X^3 + A'X + B'.
+        ///  1) Use reductions at several good primes to restrict possible orders (Mazur admissible).
+        ///  2) Apply Lutz–Nagell: Y^2 | |Δ'| and search via divisors to find integral torsion points.
+        ///  3) Map the points back to the ORIGINAL model (inverse of the short/scale transform).
+        /// Set contains Infinity and all affine torsion points; subsequent calls reuse the cache.
+        /// </summary>
         public IEnumerable<EllipticCurvePoint> TorsionPoints
         {
             get
@@ -241,19 +298,21 @@ namespace EllipticCurves
                         BigRational.Zero, BigRational.Zero, BigRational.Zero,
                         new BigRational(Ashort), new BigRational(Bshort));
 
-                    // Δ' = -16(4A'^3 + 27B'^2)
+                    // Δ' = −16(4A'^3 + 27B'^2). Nonsingular iff Δ' ≠ 0.
                     BigInteger Delta = -16 * (4 * BigInteger.Pow(Ashort, 3) + 27 * BigInteger.Pow(Bshort, 2));
                     if (Delta.IsZero) throw new InvalidOperationException("Singular curve.");
 
-                    // ---- 1) Candidate orders via reductions mod small good primes ----
+                    // ---- 1) Candidate orders via gcd of #E(F_p) for several good primes ----
+                    // NOTE: if your C# doesn't support collection expressions, replace with new int[] { ... }.
                     int[] primes = [5, 7, 11, 13, 17, 19, 23, 29];
                     BigInteger gcdOrders = BigInteger.Zero;
                     for (int i = 0; i < primes.Length; i++)
                     {
                         int p = primes[i];
-                        if (Delta % p == 0) continue; // good reduction only
-                        var np = InternalMath.CountPointsFpShort(Ashort, Bshort, p); // #E(F_p)
-                        gcdOrders = gcdOrders.IsZero ? new BigInteger(np) : BigInteger.GreatestCommonDivisor(gcdOrders, np);
+                        if (Delta % p == 0) continue; // only good reduction
+                        var np = InternalMath.CountPointsFpShort(Ashort, Bshort, p);
+                        gcdOrders = gcdOrders.IsZero ? new BigInteger(np)
+                                                     : BigInteger.GreatestCommonDivisor(gcdOrders, np);
                         if (gcdOrders.IsOne) break;
                     }
                     int[] mazur = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12];
@@ -275,7 +334,7 @@ namespace EllipticCurves
                         if (x != 0 && InternalMath.EvalCubic(Ashort, Bshort, -x) == 0)
                             T.Add(new EllipticCurvePoint(new BigRational(-x), BigRational.Zero));
                     }
-                    // Edge: B'=0 ⇒ X = ±sqrt(-A') (if square)
+                    // Edge: B' = 0 ⇒ X = ±sqrt(−A') if square
                     if (Bshort.IsZero)
                     {
                         var negA = BigInteger.Negate(Ashort);
@@ -292,14 +351,14 @@ namespace EllipticCurves
                         }
                     }
 
-                    // 2b) odd torsion: y != 0 and y^2 | |Δ'|
+                    // 2b) odd torsion: y ≠ 0 and y^2 | |Δ'|
                     var factDelta = InternalMath.FactorAbs(Delta);
                     foreach (var y2 in InternalMath.EnumerateSquareDivisors(factDelta)) // y2 ≥ 1
                     {
                         if (y2.IsZero) continue;
                         var y = InternalMath.IntegerSqrt(y2); // exact sqrt
 
-                        var C = Bshort - y2;     // X^3 + A'X + (B' - y^2) = 0
+                        var C = Bshort - y2; // X^3 + A'X + (B' − y^2) = 0
                         if (C.IsZero)
                         {
                             var P1 = new EllipticCurvePoint(new BigRational(0), new BigRational(y));
@@ -355,28 +414,26 @@ namespace EllipticCurves
                     }
 
                     // ---- 3) Map SHORT-INTEGRAL torsion back to ORIGINAL coordinates ----
-                    var mapped = new HashSet<EllipticCurvePoint>
-                    {
-                        EllipticCurvePoint.Infinity
-                    };
+                    var mapped = new HashSet<EllipticCurvePoint> { EllipticCurvePoint.Infinity };
 
                     var d2 = BigInteger.Pow(d, 2);
                     var d3 = BigInteger.Pow(d, 3);
 
+                    // Inverse transform:
+                    // short rational (X,Y) = (X_int/d^2, Y_int/d^3)
                     // a2' = A2 + (A1/2)^2
-                    var s1 = A1 / BigRational.FromInt(2);       // ORIGINAL A1
-                    var a2p = A2 + s1 * s1;                     // ORIGINAL A2
+                    // original: x = X − a2'/3,   y = Y − (A1*x + A3)/2
+                    var s1 = A1 / BigRational.FromInt(2);      // ORIGINAL A1
+                    var a2p = A2 + s1 * s1;                     // a2'
                     var shift = a2p / BigRational.FromInt(3);   // a2'/3
 
                     foreach (var P in T)
                     {
                         if (P.IsInfinity) continue;
 
-                        // short rational coords
                         var X = P.X / new BigRational(d2);
                         var Y = P.Y / new BigRational(d3);
 
-                        // original coords: x = X - a2'/3,  y = Y - (A1*x + A3)/2
                         var x = X - shift;
                         var y = Y - (A1 * x + A3) / BigRational.FromInt(2);
 
@@ -391,12 +448,16 @@ namespace EllipticCurves
             }
         }
 
+        /// <summary>
+        /// Group structure of the rational torsion subgroup E(ℚ)_tors inferred from TorsionPoints.
+        /// Returns a label like "Z/1Z", "Z/4Z", or "Z/2Z x Z/4Z".
+        /// </summary>
         public string TorsionStructure
         {
             get
             {
-                // Deduce group structure from torsion set
-                int size = TorsionPoints.Count(); // includes Infinity; equals |E(Q)_tors|
+                // size includes Infinity and equals |E(ℚ)_tors|
+                int size = TorsionPoints.Count();
                 if (size == 1) return "Z/1Z";
 
                 int twoTors = 0;
@@ -407,13 +468,13 @@ namespace EllipticCurves
 
                 if (twoTors == 3)
                 {
-                    // E(Q)_tors ≅ Z/2Z × Z/2mZ with m ∈ {1,2,3,4} and |E(Q)_tors| = 4m
+                    // Only non-cyclic case over ℚ: Z/2 × Z/2m (m=1..4), with |tors| = 4m.
                     int m = size / 4;
                     return $"Z/2Z x Z/{2 * m}Z";
                 }
                 else
                 {
-                    // cyclic case
+                    // Otherwise cyclic of order 'size'
                     return $"Z/{size}Z";
                 }
             }
@@ -423,11 +484,11 @@ namespace EllipticCurves
 
         #region Overrides
 
+        /// <summary>Pretty printer that omits zero terms and formats signs compactly.</summary>
         public override string ToString()
         {
             var sb = new StringBuilder();
 
-            // ------------ EC ------------
             // Left: y^2 + a1*x*y + a3*y
             sb.Append("y^2");
             AppendTerm(sb, A1, "x*y");
@@ -445,6 +506,7 @@ namespace EllipticCurves
             return sb.ToString();
         }
 
+        /// <summary>Helper for ToString(): appends ± coeff*monomial, skipping zeros and eliding coeff=1 where appropriate.</summary>
         private static void AppendTerm(StringBuilder sb, BigRational coeff, string monomial)
         {
             if (coeff.IsZero) return;
@@ -469,6 +531,5 @@ namespace EllipticCurves
         }
 
         #endregion
-
     }
 }
