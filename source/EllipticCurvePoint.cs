@@ -19,7 +19,7 @@ namespace EllipticCurves
     /// infinity point is only equal to itself.
     /// </para>
     /// </summary>
-    public readonly struct EllipticCurvePoint : IEquatable<EllipticCurvePoint>
+    public readonly partial struct EllipticCurvePoint : IEquatable<EllipticCurvePoint>
     {
         /// <summary>
         /// Affine <c>x</c>-coordinate (exact rational). For <see cref="Infinity"/>, this is <c>0</c>.

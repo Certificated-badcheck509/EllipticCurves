@@ -17,7 +17,7 @@ namespace EllipticCurves
     ///  • Designed for exact math in number theory (elliptic curves, invariants, etc.),
     ///    not for floating-point approximations.
     /// </summary>
-    public readonly struct BigRational : IEquatable<BigRational>, IComparable<BigRational>
+    public readonly partial struct BigRational : IEquatable<BigRational>, IComparable<BigRational>
     {
         /// <summary>Numerator (can be negative).</summary>
         public BigInteger Num { get; }

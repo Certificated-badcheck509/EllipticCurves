@@ -25,7 +25,7 @@ namespace EllipticCurves
     ///   expressions like `int[] small = [2,3,...]` with classic initializers
     ///   `new int[] { 2, 3, ... }`.
     /// </summary>
-    internal static class InternalMath
+    internal static partial class InternalMath
     {
         /// <summary>
         /// Compute integral invariants (c4, c6, Δ) from integral a-invariants [a1,a2,a3,a4,a6].
