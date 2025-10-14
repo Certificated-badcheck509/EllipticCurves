@@ -1,0 +1,589 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EllipticCurves</name>
+    </assembly>
+    <members>
+        <member name="T:EllipticCurves.BigRational">
+            <summary>
+            A minimal, allocation-friendly rational type for exact arithmetic over Q.
+            
+            Invariants:
+             • Always stored in canonical form: gcd(|Num|, Den) = 1
+             • Denominator is strictly positive (Den > 0)
+             • Zero is represented as 0/1
+            
+            Notes:
+             • This is an immutable value type with value semantics (Equals/GetHashCode implemented).
+             • Designed for exact math in number theory (elliptic curves, invariants, etc.),
+               not for floating-point approximations.
+            </summary>
+        </member>
+        <member name="P:EllipticCurves.BigRational.Num">
+            <summary>Numerator (can be negative).</summary>
+        </member>
+        <member name="P:EllipticCurves.BigRational.Den">
+            <summary>Denominator (strictly positive by invariant).</summary>
+        </member>
+        <member name="F:EllipticCurves.BigRational.Zero">
+            <summary>The rational number 0 (stored as 0/1).</summary>
+        </member>
+        <member name="F:EllipticCurves.BigRational.One">
+            <summary>The rational number 1 (stored as 1/1).</summary>
+        </member>
+        <member name="F:EllipticCurves.BigRational.Two">
+            <summary>The rational number 2 (stored as 2/1).</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.#ctor(System.Int64)">
+            <summary>Create from a 64-bit integer (n/1).</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.#ctor(System.Numerics.BigInteger)">
+            <summary>Create from a BigInteger (n/1).</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.#ctor(System.Numerics.BigInteger,System.Numerics.BigInteger)">
+            <summary>
+            Create from a numerator/denominator pair and normalize:
+             • throw if den == 0
+             • move the sign into the numerator
+             • divide by gcd(|num|, den)
+             • normalize zero to 0/1
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.FromInt(System.Int64)">
+            <summary>Create from an integer (n/1).</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.FromFraction(System.Numerics.BigInteger,System.Numerics.BigInteger)">
+            <summary>Create from an unreduced fraction (num/den); will be normalized.</summary>
+        </member>
+        <member name="P:EllipticCurves.BigRational.IsZero">
+            <summary>True if this is exactly zero.</summary>
+        </member>
+        <member name="P:EllipticCurves.BigRational.Sign">
+            <summary>Sign of the rational: −1, 0, or +1.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.Abs">
+            <summary>Absolute value (|Num|/Den).</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.Negate">
+            <summary>Negation (−Num/Den).</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.Reciprocal">
+            <summary>Multiplicative inverse (Den/Num). Throws if zero.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_Addition(EllipticCurves.BigRational,EllipticCurves.BigRational)">
+            <summary>Exact addition with normalization.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_Subtraction(EllipticCurves.BigRational,EllipticCurves.BigRational)">
+            <summary>Exact subtraction with normalization.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_Multiply(EllipticCurves.BigRational,EllipticCurves.BigRational)">
+            <summary>Exact multiplication with normalization.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_Division(EllipticCurves.BigRational,EllipticCurves.BigRational)">
+            <summary>Exact division with normalization. Throws if divisor is zero.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_UnaryNegation(EllipticCurves.BigRational)">
+            <summary>Unary negation.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.Pow(EllipticCurves.BigRational,System.Int32)">
+            <summary>
+            r^k for integer k ≥ 0. For k == 0 returns 1 by convention.
+            Note: if you need negative powers, use Reciprocal with a positive exponent.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.IsSquare(EllipticCurves.BigRational,EllipticCurves.BigRational@)">
+            <summary>
+            Exact test for a rational square: returns true iff r = s^2 for some s ∈ Q
+            and outputs s in canonical form. Works by requiring both numerator and
+            denominator to be perfect squares in Z.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.TryIntegerSquareRoot(System.Numerics.BigInteger,System.Numerics.BigInteger@)">
+            <summary>
+            Try exact integer square root: returns true iff n is a perfect square and
+            outputs rt = sqrt(n). Otherwise returns false and sets rt = floor(sqrt(n)).
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.IntegerSquareRoot(System.Numerics.BigInteger)">
+            <summary>
+            floor(sqrt(n)) for n ≥ 0 using a monotone Newton iteration.
+            For n ∈ {0,1} returns n; otherwise converges from above.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_Equality(EllipticCurves.BigRational,EllipticCurves.BigRational)">
+            <summary>Value equality (uses canonical representation, so structural equality works).</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_Inequality(EllipticCurves.BigRational,EllipticCurves.BigRational)">
+            <summary>Value inequality.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_LessThan(EllipticCurves.BigRational,EllipticCurves.BigRational)">
+            <summary>Strict less-than (exact ℚ order via cross-products).</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_GreaterThan(EllipticCurves.BigRational,EllipticCurves.BigRational)">
+            <summary>Strict greater-than (exact order on ℚ; cross-products).</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_LessThanOrEqual(EllipticCurves.BigRational,EllipticCurves.BigRational)">
+            <summary>Less-than or equal (exact order on ℚ; cross-products).</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_GreaterThanOrEqual(EllipticCurves.BigRational,EllipticCurves.BigRational)">
+            <summary>Greater-than or equal (exact order on ℚ; cross-products).</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.CompareTo(EllipticCurves.BigRational)">
+            <summary>
+            Lexicographic-free comparison via cross-multiplication:
+            compare Num/Den and other.Num/other.Den exactly.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.Equals(EllipticCurves.BigRational)">
+            <summary>Typed equality (same as operator ==).</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.Equals(System.Object)">
+            <summary>Boxed equality.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.GetHashCode">
+            <summary>
+            Hash code consistent with canonical form and operator ==.
+            Uses a simple pair hash; stable across runs of the same framework.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.ToString">
+            <summary>
+            Culture-invariant string: "n" for integers, "n/d" for proper fractions.
+            Intended for logs/debugging and round-trippable parsing in simple cases.
+            </summary>
+        </member>
+        <member name="T:EllipticCurves.EllipticCurveLMFDB">
+            <summary>
+            Thin helper that fetches basic invariants for an elliptic curve over ℚ from the LMFDB API,
+            matching by the exact rational j-invariant and verifying Q–isomorphism via (c4,c6,Δ).
+            
+            Design:
+             • Single network call to <c>/api/ec_curvedata</c> (no secondary requests).
+             • Minimal local cache of the selected record (a-invariants, conductor, rank, etc.).
+             • No retries/backoff: the caller controls lifetime by constructing a new instance.
+            
+            Safety:
+             • Throws <see cref="T:System.InvalidOperationException"/> when the record is not initialized
+               or if no Q–isomorphic curve is found for the given j-invariant.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveLMFDB.#ctor(EllipticCurves.EllipticCurveQ)">
+            <summary>
+            Construct and immediately fetch/cached the matching LMFDB record
+            for <paramref name="ellipticCurve"/> (matching by j–invariant and Q–isomorphism).
+            </summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveLMFDB.Rank">
+            <summary>
+            Algebraic rank (Mordell–Weil rank) from LMFDB curvedata.
+            </summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveLMFDB.AnalyticRank">
+            <summary>
+            Analytic rank (ord_{s=1} L(E,s)) when present in LMFDB; otherwise <c>null</c>.
+            </summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveLMFDB.Conductor">
+            <summary>
+            Conductor N of the (minimal) elliptic curve over ℚ.
+            </summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveLMFDB.Label">
+            <summary>
+            LMFDB label (e.g. <c>"48.a3"</c>) of the matched minimal model.
+            </summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveLMFDB.Url">
+            <summary>
+            Canonical human-facing LMFDB URL of the curve's page (or empty string if label is missing).
+            </summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveLMFDB.TorsionStructure">
+            <summary>
+            Torsion structure in a compact textual form, e.g. <c>"Z/2Z"</c> or <c>"Z/2Z x Z/4Z"</c>.
+            </summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveLMFDB.GlobalMinimalModel">
+            <summary>
+            Minimal (global) integral Weierstrass model reconstructed from the a-invariants in LMFDB.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveLMFDB.GetLmfdbRecord(EllipticCurves.EllipticCurveQ)">
+            <summary>
+            Fetch a list of candidates by exact rational j-invariant, then select the unique
+            curve Q–isomorphic to <paramref name="ellipticCurve"/> by verifying (c4,c6,Δ) scaling.
+            Caches the selected record; subsequent property reads are served from the cache.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveLMFDB.FormatTorsionStructure(System.Text.Json.JsonElement)">
+            <summary>
+            Accepts either an integer array (e.g. [2,4]) or a ready string (e.g. "Z/2Z x Z/4Z")
+            and returns a normalized textual form "Z/nZ" or "Z/aZ x Z/bZ".
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveLMFDB.ParseAinvs(System.Text.Json.JsonElement)">
+            <summary>
+            Parse a-invariants from LMFDB payload. Supports either a JSON array of numbers
+            or a string form "[a1,a2,a3,a4,a6]".
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveLMFDB.ReadBigInteger(System.Text.Json.JsonElement)">
+            <summary>
+            Parse a BigInteger from either a numeric JSON token or a string token.
+            </summary>
+        </member>
+        <member name="T:EllipticCurves.EllipticCurvePoint">
+            <summary>
+            Immutable affine point on an elliptic curve over <c>ℚ</c> (the rationals).
+            
+            <para>
+            Representation:
+            <list type="bullet">
+              <item><description>Finite points are stored as exact rationals <see cref="F:EllipticCurves.EllipticCurvePoint.X"/>, <see cref="F:EllipticCurves.EllipticCurvePoint.Y"/> with <see cref="F:EllipticCurves.EllipticCurvePoint.IsInfinity"/> = <c>false</c>.</description></item>
+              <item><description>The neutral element (point at infinity) is represented canonically by <see cref="P:EllipticCurves.EllipticCurvePoint.Infinity"/> with <see cref="F:EllipticCurves.EllipticCurvePoint.IsInfinity"/> = <c>true</c> and <see cref="F:EllipticCurves.EllipticCurvePoint.X"/>=<see cref="F:EllipticCurves.EllipticCurvePoint.Y"/>=<c>0</c>.</description></item>
+            </list>
+            </para>
+            
+            <para>
+            Equality and hashing follow value semantics:
+            two finite points are equal iff both coordinates are equal as rationals; the
+            infinity point is only equal to itself.
+            </para>
+            </summary>
+        </member>
+        <member name="F:EllipticCurves.EllipticCurvePoint.X">
+            <summary>
+            Affine <c>x</c>-coordinate (exact rational). For <see cref="P:EllipticCurves.EllipticCurvePoint.Infinity"/>, this is <c>0</c>.
+            </summary>
+        </member>
+        <member name="F:EllipticCurves.EllipticCurvePoint.Y">
+            <summary>
+            Affine <c>y</c>-coordinate (exact rational). For <see cref="P:EllipticCurves.EllipticCurvePoint.Infinity"/>, this is <c>0</c>.
+            </summary>
+        </member>
+        <member name="F:EllipticCurves.EllipticCurvePoint.IsInfinity">
+            <summary>
+            Indicates whether the point is the neutral element (the point at infinity).
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurvePoint.#ctor(EllipticCurves.BigRational,EllipticCurves.BigRational)">
+            <summary>
+            Create a finite point with given affine coordinates <paramref name="x"/>, <paramref name="y"/>.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurvePoint.#ctor(System.Boolean)">
+            <summary>
+            Private constructor used to create the canonical infinity element.
+            </summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurvePoint.Infinity">
+            <summary>
+            The neutral element of the elliptic curve group (point at infinity).
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurvePoint.Equals(EllipticCurves.EllipticCurvePoint)">
+            <summary>
+            Value equality: finite points compare by coordinates; infinity compares only to infinity.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurvePoint.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurvePoint.GetHashCode">
+            <summary>
+            Hash code consistent with <see cref="M:EllipticCurves.EllipticCurvePoint.Equals(EllipticCurves.EllipticCurvePoint)"/>.
+            Combines <see cref="F:EllipticCurves.EllipticCurvePoint.X"/>, <see cref="F:EllipticCurves.EllipticCurvePoint.Y"/> and <see cref="F:EllipticCurves.EllipticCurvePoint.IsInfinity"/>.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurvePoint.ToString">
+            <summary>
+            Human-readable representation: <c>"O"</c> for infinity; <c>"(x, y)"</c> for finite points.
+            Uses <see cref="M:EllipticCurves.BigRational.ToString"/> for coordinates (culture-invariant).
+            </summary>
+        </member>
+        <member name="T:EllipticCurves.EllipticCurveQ">
+            <summary>
+            Elliptic curve over ℚ in the general Weierstrass form
+                y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6 .
+            All coefficients are exact rationals (BigRational). This type implements:
+             • exact invariants (b2,b4,b6,b8), c4, c6, Δ, j,
+             • the general Weierstrass group law (Add/Double/Multiply),
+             • conversion to the short model y^2 = x^3 + A x + B in characteristic 0,
+             • bounded search for rational/integral points,
+             • a self-contained computation of torsion points over ℚ
+               (via Lutz–Nagell + reductions), including mapping back to the original model.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.#ctor(EllipticCurves.BigRational,EllipticCurves.BigRational,EllipticCurves.BigRational,EllipticCurves.BigRational,EllipticCurves.BigRational)">
+            <summary>Create an elliptic curve y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6.</summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.A1">
+            <summary>a1 coefficient in the general Weierstrass equation.</summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.A2">
+            <summary>a2 coefficient in the general Weierstrass equation.</summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.A3">
+            <summary>a3 coefficient in the general Weierstrass equation.</summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.A4">
+            <summary>a4 coefficient in the general Weierstrass equation.</summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.A6">
+            <summary>a6 coefficient in the general Weierstrass equation.</summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.B2">
+            <summary>b2 = a1^2 + 4 a2.</summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.B4">
+            <summary>b4 = 2 a4 + a1 a3.</summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.B6">
+            <summary>b6 = a3^2 + 4 a6.</summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.B8">
+            <summary>b8 = a1^2 a6 + 4 a2 a6 − a1 a3 a4 + a2 a3^2 − a4^2.</summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.C4">
+            <summary>c4 = b2^2 − 24 b4.</summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.C6">
+            <summary>c6 = −b2^3 + 36 b2 b4 − 216 b6.</summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.Discriminant">
+            <summary>
+            Discriminant Δ = −b2^2 b8 − 8 b4^3 − 27 b6^2 + 9 b2 b4 b6.
+            The curve is nonsingular iff Δ ≠ 0.
+            </summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.JInvariant">
+            <summary>j-invariant j = c4^3 / Δ (only defined if Δ ≠ 0).</summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.IsSingular">
+            <summary>True iff the curve is singular (Δ = 0).</summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.IsOnCurve(EllipticCurves.EllipticCurvePoint)">
+            <summary>Exact membership test for a point in affine coordinates.</summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.Negate(EllipticCurves.EllipticCurvePoint)">
+            <summary>Group inverse: −(x,y) = (x, −y − a1 x − a3).</summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.Add(EllipticCurves.EllipticCurvePoint,EllipticCurves.EllipticCurvePoint)">
+            <summary>
+            Group law (general Weierstrass). Handles P, Q, doubling, and the vertical-tangent case.
+            Slope:
+             • If x1 ≠ x2: λ = (y2 − y1)/(x2 − x1).
+             • If P = Q:   λ = (3x1^2 + 2a2 x1 + a4 − a1 y1) / (2y1 + a1 x1 + a3).
+            Then:
+             x3 = λ^2 + a1 λ − a2 − x1 − x2,
+             ν = y1 − λ x1,
+             y3 = −(λ + a1) x3 − a3 − ν.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.Double(EllipticCurves.EllipticCurvePoint)">
+            <summary>Point doubling: 2P = P + P.</summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.Multiply(EllipticCurves.EllipticCurvePoint,System.Numerics.BigInteger)">
+            <summary>
+            Scalar multiplication nP using left-to-right double-and-add.
+            Supports n &lt; 0 (via negation) and n = 0 (returns O).
+            </summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.ShortWeierstrass">
+            <summary>
+            Convert to the short Weierstrass model in characteristic 0.
+            Steps:
+             1) Complete the square: y = y' − (a1 x + a3)/2 ⇒ y'^2 = x^3 + a2' x^2 + a4' x + a6'
+             2) Remove x^2-term:    x = X − a2'/3          ⇒ y'^2 = X^3 + A X + B
+            Returns a curve with (a1,a2,a3) = (0,0,0) and (a4,a6) = (A,B).
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.RationalPoints(System.Int32,System.Int32)">
+            <summary>
+            Enumerate rational points with bounded x = m/n (|m| ≤ numMax, 1 ≤ n ≤ denMax, gcd(m,n)=1).
+            Uses the substitution y' = y + (a1 x + a3)/2 to test y'^2 being a rational square.
+            Returns O first, then affine points found in the box.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.IntegralPoints(System.Int32)">
+            <summary>
+            Enumerate integral points with |x| ≤ xmax (a thin wrapper over RationalPoints with denMax=1).
+            Returns O first, then affine integral points.
+            </summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.TorsionPoints">
+            <summary>
+            Compute (and cache) the full set of rational torsion points of E(ℚ).
+            Pipeline (no LMFDB):
+             0) Convert to short integral model Y^2 = X^3 + A'X + B'.
+             1) Use reductions at several good primes to restrict possible orders (Mazur admissible).
+             2) Apply Lutz–Nagell: Y^2 | |Δ'| and search via divisors to find integral torsion points.
+             3) Map the points back to the ORIGINAL model (inverse of the short/scale transform).
+            Set contains Infinity and all affine torsion points; subsequent calls reuse the cache.
+            </summary>
+        </member>
+        <member name="P:EllipticCurves.EllipticCurveQ.TorsionStructure">
+            <summary>
+            Group structure of the rational torsion subgroup E(ℚ)_tors inferred from TorsionPoints.
+            Returns a label like "Z/1Z", "Z/4Z", or "Z/2Z x Z/4Z".
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.ToString">
+            <summary>Pretty printer that omits zero terms and formats signs compactly.</summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.AppendTerm(System.Text.StringBuilder,EllipticCurves.BigRational,System.String)">
+            <summary>Helper for ToString(): appends ± coeff*monomial, skipping zeros and eliding coeff=1 where appropriate.</summary>
+        </member>
+        <member name="T:EllipticCurves.InternalMath">
+            <summary>
+            Internal numeric helpers used across the library.
+            
+            Scope:
+            • Invariant computations for integral Weierstrass models (c4, c6, Δ).
+            • Q–isomorphism checks via scaling of invariants (u^4, u^6, u^12).
+            • Exact k-th roots over ℚ and ℤ (Newton / integer root tests).
+            • Fast torsion tests (order divisibility and small Mazur fallback).
+            • Small finite-field helpers: Legendre symbol, modular exponentiation,
+              and counting points on short Weierstrass curves over 𝔽_p.
+            • Basic integer factorization (Pollard–Rho + Miller–Rabin) to build
+              square divisors of |Δ| and enumerations of divisors.
+            
+            Notes:
+            • All methods are deterministic and allocation-light.
+            • Big-integer operations can be expensive for huge inputs—these are
+              intended for typical arithmetic of elliptic curves over ℚ.
+            • If you target an older C# language version, replace collection
+              expressions like `int[] small = [2,3,...]` with classic initializers
+              `new int[] { 2, 3, ... }`.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.InvariantsIntFromAinvs(System.Numerics.BigInteger[])">
+            <summary>
+            Compute integral invariants (c4, c6, Δ) from integral a-invariants [a1,a2,a3,a4,a6].
+            Assumes all inputs are integers (integral model). No normalization/scaling is applied here.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.IsQIsomorphic(EllipticCurves.BigRational,EllipticCurves.BigRational,EllipticCurves.BigRational,System.Numerics.BigInteger,System.Numerics.BigInteger,System.Numerics.BigInteger,EllipticCurves.BigRational@)">
+            <summary>
+            Check whether two elliptic curves are Q–isomorphic by testing the scaling
+            relations on invariants: c4_E = u^4 c4_C, c6_E = u^6 c6_C, Δ_E = u^12 Δ_C for some u ∈ ℚ.
+            Outputs the scaling factor u if successful.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.TryRationalKthRoot(EllipticCurves.BigRational,System.Int32,EllipticCurves.BigRational@)">
+            <summary>
+            Try to compute a rational k-th root of r ∈ ℚ (k ≥ 2). Returns true iff
+            r = root^k for some rational root in canonical form.
+            Implementation: require both |Num| and Den to be perfect k-th powers in ℤ.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.TryIntegerKthRoot(System.Numerics.BigInteger,System.Int32,System.Numerics.BigInteger@)">
+            <summary>
+            Try to compute exact integer k-th root: return true iff n = rt^k for some integer rt (rt ≥ 0).
+            Otherwise, returns false and rt = floor(n^(1/k)).
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.IntegerKthRoot(System.Numerics.BigInteger,System.Int32)">
+            <summary>
+            floor(n^(1/k)) for n ≥ 0 using Newton's method generalized to k-th roots.
+            For small n it exits fast; for large n it converges monotonically.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.IsTorsionWithCandidates(EllipticCurves.EllipticCurveQ,EllipticCurves.EllipticCurvePoint,System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Check whether a point is torsion by first testing divisibility by candidate orders
+            (coming from gcd of #E(𝔽_p) over a few good primes), and if none matches,
+            falling back to a bounded exact check up to 12 (Mazur’s bound).
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.OrderDivides(EllipticCurves.EllipticCurveQ,EllipticCurves.EllipticCurvePoint,System.Int32)">
+            <summary>
+            Return true iff n*P = O (the point at infinity), i.e. the order of P divides n.
+            Computed with double-and-add (no precomputation).
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.Lcm(System.Numerics.BigInteger,System.Numerics.BigInteger)">
+            <summary>
+            Least common multiple for nonzero BigIntegers. If either argument is 0,
+            this returns 0 by the standard convention.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.EvalCubic(System.Numerics.BigInteger,System.Numerics.BigInteger,System.Numerics.BigInteger)">
+            <summary>
+            Evaluate the cubic X^3 + A X + B at integer X.
+            Used for 2-torsion and Lutz–Nagell searches on short integral models.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.IntegerSqrt(System.Numerics.BigInteger)">
+            <summary>
+            floor(sqrt(n)) for n ≥ 0 via a monotone Newton iteration specialized to k=2.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.CountPointsFpShort(System.Numerics.BigInteger,System.Numerics.BigInteger,System.Int32)">
+            <summary>
+            Count points on a short Weierstrass curve Y^2 = X^3 + A X + B over 𝔽_p (p odd and small).
+            Uses Legendre symbol to count square/non-square values of RHS for each X.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.Legendre(System.Int32,System.Int32)">
+            <summary>
+            Legendre symbol (a|p) for odd prime p: returns 0 if a ≡ 0 (mod p), 1 if a is a QR, −1 otherwise.
+            Euler’s criterion: a^((p−1)/2) ≡ (a|p) (mod p).
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.ModPow(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Fast modular exponentiation (a^e mod m) with 32-bit ints.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.FactorAbs(System.Numerics.BigInteger)">
+            <summary>
+            Trial factorization via Pollard–Rho with Miller–Rabin primality tests.
+            Returns a dictionary of prime factors with exponents for |n|.
+            Note: For very large inputs, this is a heuristic/“good enough” routine.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.FactorRec(System.Numerics.BigInteger,System.Collections.Generic.Dictionary{System.Numerics.BigInteger,System.Int32})">
+            <summary>
+            Recursive helper for FactorAbs: splits composite n into prime factors using
+            Miller–Rabin (probable prime) and Pollard–Rho to find nontrivial divisors.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.IsProbablePrime(System.Numerics.BigInteger)">
+            <summary>
+            Probable-prime test: quick small trial division, then Miller–Rabin with a fixed base set.
+            For 64-bit sized integers the chosen bases are deterministic; for larger they are practical.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.MillerRabinCheck(System.Numerics.BigInteger,System.Numerics.BigInteger,System.Int32,System.Int32)">
+            <summary>
+            One Miller–Rabin round for given odd n, with factorization n−1 = d·2^s and base a.
+            Returns false if n is definitely composite, true if it passes this round.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.PollardRho(System.Numerics.BigInteger)">
+            <summary>
+            Pollard–Rho with a simple f(x)=x^2+c map and Brent-like cycle detection.
+            Returns a nontrivial divisor of odd composite n (heuristic, but very effective in practice).
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.RandomBelow(System.Numerics.BigInteger,System.Random)">
+            <summary>
+            Return a random integer r with 0 &lt; r &lt; n using the provided PRNG.
+            The distribution is not cryptographically secure (intended for math utilities).
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.EnumerateSquareDivisors(System.Collections.Generic.Dictionary{System.Numerics.BigInteger,System.Int32})">
+            <summary>
+            Enumerate all square divisors y2 of |Δ| using its prime factorization:
+            if |Δ|=∏ p_i^{e_i}, then y2 ranges over ∏ p_i^{2f_i} with 0≤f_i≤⌊e_i/2⌋.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.InternalMath.EnumerateDivisorsAbs(System.Numerics.BigInteger)">
+            <summary>
+            Enumerate all positive divisors of |n| from its factorization (includes 1 and |n|).
+            Returns 0 only if input n was 0 (by convention).
+            </summary>
+        </member>
+    </members>
+</doc>

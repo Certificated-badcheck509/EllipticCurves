@@ -175,13 +175,16 @@ namespace EllipticCurves
         /// <summary>Value inequality.</summary>
         public static bool operator !=(BigRational a, BigRational b) => !(a == b);
 
-        /// <summary>Total order compatible with arithmetic (compares a/b and c/d by cross-products).</summary>
+        /// <summary>Strict less-than (exact ℚ order via cross-products).</summary>
         public static bool operator <(BigRational a, BigRational b) => a.CompareTo(b) < 0;
 
+        /// <summary>Strict greater-than (exact order on ℚ; cross-products).</summary>
         public static bool operator >(BigRational a, BigRational b) => a.CompareTo(b) > 0;
 
+        /// <summary>Less-than or equal (exact order on ℚ; cross-products).</summary>
         public static bool operator <=(BigRational a, BigRational b) => a.CompareTo(b) <= 0;
 
+        /// <summary>Greater-than or equal (exact order on ℚ; cross-products).</summary>
         public static bool operator >=(BigRational a, BigRational b) => a.CompareTo(b) >= 0;
 
         /// <summary>
