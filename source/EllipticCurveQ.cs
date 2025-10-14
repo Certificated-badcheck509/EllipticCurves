@@ -19,6 +19,14 @@ namespace EllipticCurves
     /// </summary>
     public sealed partial class EllipticCurveQ
     {
+        /// <summary>Create an elliptic curve y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6.</summary>
+        public EllipticCurveQ(BigRational a1, BigRational a2, BigRational a3, BigRational a4, BigRational a6)
+        {
+            A1 = a1; A2 = a2; A3 = a3; A4 = a4; A6 = a6;
+        }
+
+        #region Coefficients
+
         /// <summary>a1 coefficient in the general Weierstrass equation.</summary>
         public BigRational A1 { get; }
 
@@ -34,11 +42,7 @@ namespace EllipticCurves
         /// <summary>a6 coefficient in the general Weierstrass equation.</summary>
         public BigRational A6 { get; }
 
-        /// <summary>Create an elliptic curve y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6.</summary>
-        public EllipticCurveQ(BigRational a1, BigRational a2, BigRational a3, BigRational a4, BigRational a6)
-        {
-            A1 = a1; A2 = a2; A3 = a3; A4 = a4; A6 = a6;
-        }
+        #endregion
 
         #region Invariants (b2, b4, b6, b8), c4, c6, discriminant, j-invariant
 

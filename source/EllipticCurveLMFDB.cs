@@ -133,6 +133,8 @@ namespace EllipticCurves
             }
         }
 
+        #endregion
+
         #region Private methods
 
         // --- Local cache of a single curvedata record ---
@@ -296,8 +298,6 @@ namespace EllipticCurves
                 _ => throw new FormatException("LMFDB: bad integer field.")
             };
         }
-
-        #endregion
 
         #endregion
     }
