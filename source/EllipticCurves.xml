@@ -438,7 +438,9 @@
             </summary>
         </member>
         <member name="M:EllipticCurves.EllipticCurveQ.IsTorsionPoint(EllipticCurves.EllipticCurvePoint)">
-            <summary>True iff the given point lies on the curve and is torsion (order &lt; ∞).</summary>
+            <summary>
+            True iff the given point lies on the curve and is torsion (order &lt; ∞).
+            </summary>
         </member>
         <member name="M:EllipticCurves.EllipticCurveQ.TorsionOrder(EllipticCurves.EllipticCurvePoint)">
             <summary>
