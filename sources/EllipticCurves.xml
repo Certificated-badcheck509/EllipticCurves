@@ -192,7 +192,7 @@
         </member>
         <member name="P:EllipticCurves.EllipticCurveLMFDB.Url">
             <summary>
-            Canonical human-facing LMFDB URL of the curve's page (or empty string if label is missing).
+            Canonical human-facing LMFDB URL of the curve's page (or null if label is missing).
             </summary>
         </member>
         <member name="P:EllipticCurves.EllipticCurveLMFDB.TorsionStructure">

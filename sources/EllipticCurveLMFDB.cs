@@ -83,7 +83,7 @@ namespace EllipticCurves
         }
 
         /// <summary>
-        /// Canonical human-facing LMFDB URL of the curve's page (or empty string if label is missing).
+        /// Canonical human-facing LMFDB URL of the curve's page (or null if label is missing).
         /// </summary>
         public string Url
         {
