@@ -217,11 +217,16 @@ namespace EllipticCurves
         public static int CountPointsFpShort(BigInteger A, BigInteger B, int p)
         {
             int cnt = 1; // point at infinity
+            BigInteger Amod = A % p;
+            if (Amod < 0) Amod += p;
+            BigInteger Bmod = B % p;
+            if (Bmod < 0) Bmod += p;
             for (int x = 0; x < p; x++)
             {
-                BigInteger rhs = (BigInteger)x * x % p;
-                rhs = (rhs * x + A) % p; // x^3 + A x
-                rhs = (rhs + B) % p;     // + B
+                BigInteger xVal = x;
+                BigInteger rhs = (xVal * xVal) % p;                // x^2
+                rhs = (rhs * xVal + Amod * xVal) % p;              // x^3 + A x
+                rhs = (rhs + Bmod) % p;                            // + B
                 if (rhs < 0) rhs += p;
 
                 int chi = Legendre((int)rhs, p); // 0, 1, -1
