@@ -52,6 +52,7 @@ Torsion: Z/2Z x Z/4Z
 Rank(E) = 0
 Analytic rank(E) = 0
 Cond(E) = 48
+Isomorphic to E: True
 ```
 
 # License
