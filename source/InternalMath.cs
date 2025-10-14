@@ -184,7 +184,10 @@ namespace EllipticCurves
         /// </summary>
         public static BigInteger Lcm(BigInteger a, BigInteger b)
         {
-            return a / BigInteger.GreatestCommonDivisor(a, b) * b;
+            if (a.IsZero || b.IsZero) return BigInteger.Zero;
+            var gcd = BigInteger.GreatestCommonDivisor(a, b);
+            var lcm = (a / gcd) * b;
+            return BigInteger.Abs(lcm);
         }
 
         /// <summary>

@@ -464,9 +464,13 @@ namespace EllipticCurves
                 if (size == 1) return "Z/1Z";
 
                 int twoTors = 0;
+                var two = BigRational.FromInt(2);
                 foreach (var P in TorsionPoints)
                 {
-                    if (!P.IsInfinity && P.Y.IsZero) twoTors++;
+                    if (P.IsInfinity) continue;
+
+                    var doublingCondition = two * P.Y + A1 * P.X + A3;
+                    if (doublingCondition.IsZero) twoTors++;
                 }
 
                 if (twoTors == 3)
