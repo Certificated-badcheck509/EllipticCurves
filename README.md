@@ -1,5 +1,5 @@
 <p align="center"><img width="25%" src="docs/ec_logo.png" /></p>
-<p align="center"> .NET library to research elliptic curves </p>    
+<p align="center"> .NET library for studying and working with elliptic curves </p>    
 
 # About
 **EllipticCurves** is a small C# library for studying and working with elliptic curves. It provides functionality to compute and explore:
