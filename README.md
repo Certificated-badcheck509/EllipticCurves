@@ -1,13 +1,29 @@
 <p align="center"><img width="25%" src="docs/ec_logo.png" /></p>
 <p align="center"> .NET library to research elliptic curves </p>    
 
+# About
+**EllipticCurves** is a small C# library for studying and working with elliptic curves. It provides functionality to compute and explore:
+* coefficients and group structure,  
+* discriminant and j-invariant,  
+* torsion/rational/integral points,  
+* short and minimal Weierstrass model,  
+* algebraic/analytic ranks,  
+* LMFDB label/url,  
+* conductor, etc.  
+
+# Version
+You can build **EllipticCurves** from sources or install to your own project using nuget package manager.
+| Assembly | Specification | OS | Package | Algebra |
+|-------------|:-------------:|:-------------:|:--------------:|:--------------:|
+| [EllipticCurves](sources) | .NET Standard 2.0 | Cross-platform | [NuGet](none) | [EllipticCurves](https://github.com/asiryan/EllipticCurves) |
+
 # Installation
 C# interface  
 ```c#
 using EllipticCurves;
 ```
 To get started with **EllipticCurves**, it is recommended to look at the folder with [example project](examples).  
-Here are results for the input [elliptic curve](https://github.com/asiryan/Cuboid_Conjecture_1): y^2 = x^3 - 17x^2 + 72x.
+Here are some results for the input [elliptic curve](https://github.com/asiryan/Cuboid_Conjecture_1): y^2 = x^3 - 17x^2 + 72x.
 ```
 E: y^2 = x^3 - 17*x^2 + 72*x
 Short Weierstrass: y^2 = x^3 - 73/3*x + 1190/27
