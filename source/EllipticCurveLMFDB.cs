@@ -211,6 +211,8 @@ namespace EllipticCurves
                     return;
                 }
             }
+
+            throw new InvalidOperationException("LMFDB: unexpected error occured.");
         }
 
         /// <summary>
