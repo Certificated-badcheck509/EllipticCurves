@@ -177,6 +177,10 @@ namespace EllipticCurves
 
             using var response = httpClient.GetAsync(url).GetAwaiter().GetResult();
             var json = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+            if (json.Contains("captcha"))
+                throw new InvalidOperationException("LMFDB: responded with a CAPTCHA challenge. Try again within 60 seconds.");
+
             using var doc = JsonDocument.Parse(json);
 
             if (!doc.RootElement.TryGetProperty("data", out var data) || data.ValueKind != JsonValueKind.Array)
