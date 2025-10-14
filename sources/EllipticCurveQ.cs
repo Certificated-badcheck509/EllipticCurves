@@ -513,7 +513,7 @@ namespace EllipticCurves
 
         #endregion
 
-        #region IsIsomorphicQ
+        #region Isomorphism
 
         /// <summary>
         /// Return true iff this curve is Q–isomorphic to <paramref name="other"/>.
