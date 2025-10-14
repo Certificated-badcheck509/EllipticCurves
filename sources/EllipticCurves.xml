@@ -460,6 +460,17 @@
         <member name="M:EllipticCurves.EllipticCurveQ.AppendTerm(System.Text.StringBuilder,EllipticCurves.BigRational,System.String)">
             <summary>Helper for ToString(): appends ± coeff*monomial, skipping zeros and eliding coeff=1 where appropriate.</summary>
         </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.Equals(EllipticCurves.EllipticCurveQ)">
+            <summary>
+            Value equality: finite points compare by coordinates; infinity compares only to infinity.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.GetHashCode">
+            <inheritdoc />
+        </member>
         <member name="T:EllipticCurves.InternalMath">
             <summary>
             Internal numeric helpers used across the library.
