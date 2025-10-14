@@ -18,7 +18,7 @@ namespace EllipticCurves
     ///    (via Lutz–Nagell + reductions), including mapping back to the original model.
     /// </summary>
     /// <remarks>Create an elliptic curve y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6.</remarks>
-    public sealed partial class EllipticCurveQ(BigRational a1, BigRational a2, BigRational a3, BigRational a4, BigRational a6)
+    public sealed partial class EllipticCurveQ(BigRational a1, BigRational a2, BigRational a3, BigRational a4, BigRational a6) : IEquatable<EllipticCurveQ>
     {
         #region Coefficients
 
@@ -537,33 +537,6 @@ namespace EllipticCurves
             return sb.ToString();
         }
 
-        /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(this, obj)) return true;
-            return obj is EllipticCurveQ other
-                && A1 == other.A1
-                && A2 == other.A2
-                && A3 == other.A3
-                && A4 == other.A4
-                && A6 == other.A6;
-        }
-
-        /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hash = 17;
-                hash = hash * 31 + A1.GetHashCode();
-                hash = hash * 31 + A2.GetHashCode();
-                hash = hash * 31 + A3.GetHashCode();
-                hash = hash * 31 + A4.GetHashCode();
-                hash = hash * 31 + A6.GetHashCode();
-                return hash;
-            }
-        }
-
         /// <summary>Helper for ToString(): appends ± coeff*monomial, skipping zeros and eliding coeff=1 where appropriate.</summary>
         private static void AppendTerm(StringBuilder sb, BigRational coeff, string monomial)
         {
@@ -585,6 +558,36 @@ namespace EllipticCurves
             if (!string.IsNullOrEmpty(monomial))
             {
                 sb.Append(monomial);
+            }
+        }
+
+        /// <summary>
+        /// Value equality: finite points compare by coordinates; infinity compares only to infinity.
+        /// </summary>
+        public bool Equals(EllipticCurveQ other)
+        {
+            return A1 == other.A1
+                && A2 == other.A2
+                && A3 == other.A3
+                && A4 == other.A4
+                && A6 == other.A6;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj) => obj is EllipticCurveQ ec && Equals(ec);
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 31 + A1.GetHashCode();
+                hash = hash * 31 + A2.GetHashCode();
+                hash = hash * 31 + A3.GetHashCode();
+                hash = hash * 31 + A4.GetHashCode();
+                hash = hash * 31 + A6.GetHashCode();
+                return hash;
             }
         }
 
