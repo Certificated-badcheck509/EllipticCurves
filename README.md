@@ -13,9 +13,9 @@
 
 # Version
 You can build **EllipticCurves** from sources or install to your own project using nuget package manager.
-| Assembly | Specification | OS | Package | Algebra |
+| Assembly | Specification | OS | Download | Package |
 |-------------|:-------------:|:-------------:|:--------------:|:--------------:|
-| [EllipticCurves](sources) | .NET Standard 2.0 | Cross-platform | [NuGet](none) | [EllipticCurves](https://github.com/asiryan/EllipticCurves) |
+| [EllipticCurves](sources) | .NET Standard 2.0 | Cross-platform | [Release](https://github.com/asiryan/EllipticCurves/releases/) | [NuGet](none) | 
 
 # Installation
 C# interface  
