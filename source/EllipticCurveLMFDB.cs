@@ -24,7 +24,7 @@ namespace EllipticCurves
     {
         /// <summary>
         /// Construct and immediately fetch/cached the matching LMFDB record
-        /// for <paramref name="ellipticCurve"/> (matching by j-invariant and Q–isomorphism).
+        /// for <paramref name="ellipticCurve"/> (matching by j–invariant and Q–isomorphism).
         /// </summary>
         public EllipticCurveLMFDB(EllipticCurveQ ellipticCurve)
         {
