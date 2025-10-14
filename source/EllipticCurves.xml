@@ -395,6 +395,9 @@
         <member name="M:EllipticCurves.EllipticCurveQ.Double(EllipticCurves.EllipticCurvePoint)">
             <summary>Point doubling: 2P = P + P.</summary>
         </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.Subtract(EllipticCurves.EllipticCurvePoint,EllipticCurves.EllipticCurvePoint)">
+            <summary>Point subtraction: P − Q = P + (−Q).</summary>
+        </member>
         <member name="M:EllipticCurves.EllipticCurveQ.Multiply(EllipticCurves.EllipticCurvePoint,System.Numerics.BigInteger)">
             <summary>
             Scalar multiplication nP using left-to-right double-and-add.
@@ -432,6 +435,15 @@
              2) Apply Lutz–Nagell: Y^2 | |Δ'| and search via divisors to find integral torsion points.
              3) Map the points back to the ORIGINAL model (inverse of the short/scale transform).
             Set contains Infinity and all affine torsion points; subsequent calls reuse the cache.
+            </summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.IsTorsionPoint(EllipticCurves.EllipticCurvePoint)">
+            <summary>True iff the given point lies on the curve and is torsion (order &lt; ∞).</summary>
+        </member>
+        <member name="M:EllipticCurves.EllipticCurveQ.TorsionOrder(EllipticCurves.EllipticCurvePoint)">
+            <summary>
+            Return the exact order of a torsion point or <c>null</c> if it has infinite order.
+            The point must lie on the curve; Infinity is treated as order 1.
             </summary>
         </member>
         <member name="P:EllipticCurves.EllipticCurveQ.TorsionStructure">
