@@ -179,7 +179,7 @@ namespace EllipticCurves
             var json = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             if (json.Contains("captcha"))
-                throw new InvalidOperationException("LMFDB: responded with a CAPTCHA challenge. Try again within 60 seconds.");
+                throw new InvalidOperationException("LMFDB: responded with a CAPTCHA challenge; wait and try again later or reduce request rate.");
 
             using var doc = JsonDocument.Parse(json);
 
