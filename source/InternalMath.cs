@@ -224,7 +224,7 @@ namespace EllipticCurves
             for (int x = 0; x < p; x++)
             {
                 BigInteger xVal = x;
-                BigInteger rhs = xVal * xVal % p;                // x^2
+                BigInteger rhs = xVal * xVal % p;                  // x^2
                 rhs = (rhs * xVal + Amod * xVal) % p;              // x^3 + A x
                 rhs = (rhs + Bmod) % p;                            // + B
                 if (rhs < 0) rhs += p;
