@@ -29,7 +29,7 @@
   </ItemGroup>
 	
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	<Optimize>false</Optimize>
+	<Optimize>true</Optimize>
 	<DocumentationFile>EllipticCurves.xml</DocumentationFile>
 	<OutputPath></OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
