@@ -178,10 +178,13 @@ namespace EllipticCurves
 
             using var response = httpClient.GetAsync(url).GetAwaiter().GetResult();
             var json = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
             using var doc = JsonDocument.Parse(json);
+
             if (!doc.RootElement.TryGetProperty("data", out var data) || data.ValueKind != JsonValueKind.Array)
-                throw new InvalidOperationException("LMFDB: unexpected response format");
+                throw new InvalidOperationException("LMFDB: unexpected response format.");
+
+            if (data.GetArrayLength() == 0)
+                throw new InvalidOperationException("LMFDB: no Q-isomorphic curve found for this j-invariant.");
 
             // Local invariants for Q–isomorphism validation
             var c4E = ellipticCurve.C4;
@@ -208,8 +211,6 @@ namespace EllipticCurves
                     return;
                 }
             }
-
-            throw new InvalidOperationException("LMFDB: no Q-isomorphic curve found for this j-invariant");
         }
 
         /// <summary>
@@ -264,13 +265,13 @@ namespace EllipticCurves
             // Fallback: legacy string representation "[a1,a2,a3,a4,a6]"
             if (el.ValueKind == JsonValueKind.String)
             {
-                var s = el.GetString() ?? throw new FormatException("LMFDB: ainvs is null string");
+                var s = el.GetString() ?? throw new FormatException("LMFDB: ainvs is null string.");
                 s = s.Trim();
                 if (s.StartsWith("[")) s = s.Substring(1);
                 if (s.EndsWith("]")) s = s.Substring(0, s.Length - 1);
 
                 var rawParts = s.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                if (rawParts.Length != 5) throw new FormatException("LMFDB: bad ainvs format");
+                if (rawParts.Length != 5) throw new FormatException("LMFDB: bad ainvs format.");
 
                 var a = new BigInteger[5];
                 for (int i = 0; i < 5; i++)
@@ -290,7 +291,7 @@ namespace EllipticCurves
             {
                 JsonValueKind.Number => BigInteger.Parse(el.GetRawText(), CultureInfo.InvariantCulture),
                 JsonValueKind.String => BigInteger.Parse(el.GetString()!, CultureInfo.InvariantCulture),
-                _ => throw new FormatException("LMFDB: bad integer field")
+                _ => throw new FormatException("LMFDB: bad integer field.")
             };
         }
 

@@ -82,7 +82,7 @@ namespace EllipticCurves
             get
             {
                 var delta = Discriminant;
-                if (delta.IsZero) throw new InvalidOperationException("Singular curve: discriminant = 0");
+                if (delta.IsZero) throw new InvalidOperationException("Singular curve: discriminant = 0.");
                 var c4val = C4;
                 return c4val * c4val * c4val / delta;
             }
@@ -311,8 +311,7 @@ namespace EllipticCurves
                         int p = primes[i];
                         if (Delta % p == 0) continue; // only good reduction
                         var np = InternalMath.CountPointsFpShort(Ashort, Bshort, p);
-                        gcdOrders = gcdOrders.IsZero ? new BigInteger(np)
-                                                     : BigInteger.GreatestCommonDivisor(gcdOrders, np);
+                        gcdOrders = gcdOrders.IsZero ? new BigInteger(np) : BigInteger.GreatestCommonDivisor(gcdOrders, np);
                         if (gcdOrders.IsOne) break;
                     }
                     int[] mazur = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12];
