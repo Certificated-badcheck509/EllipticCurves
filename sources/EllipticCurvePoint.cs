@@ -63,10 +63,7 @@ namespace EllipticCurves
         /// <inheritdoc/>
         public override bool Equals(object obj) => obj is EllipticCurvePoint p && Equals(p);
 
-        /// <summary>
-        /// Hash code consistent with <see cref="Equals(EllipticCurvePoint)"/>.
-        /// Combines <see cref="X"/>, <see cref="Y"/> and <see cref="IsInfinity"/>.
-        /// </summary>
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             unchecked

@@ -138,13 +138,10 @@
             <summary>Typed equality (same as operator ==).</summary>
         </member>
         <member name="M:EllipticCurves.BigRational.Equals(System.Object)">
-            <summary>Boxed equality.</summary>
+            <inheritdoc/>
         </member>
         <member name="M:EllipticCurves.BigRational.GetHashCode">
-            <summary>
-            Hash code consistent with canonical form and operator ==.
-            Uses a simple pair hash; stable across runs of the same framework.
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="M:EllipticCurves.BigRational.ToString">
             <summary>
@@ -290,10 +287,7 @@
             <inheritdoc/>
         </member>
         <member name="M:EllipticCurves.EllipticCurvePoint.GetHashCode">
-            <summary>
-            Hash code consistent with <see cref="M:EllipticCurves.EllipticCurvePoint.Equals(EllipticCurves.EllipticCurvePoint)"/>.
-            Combines <see cref="F:EllipticCurves.EllipticCurvePoint.X"/>, <see cref="F:EllipticCurves.EllipticCurvePoint.Y"/> and <see cref="F:EllipticCurves.EllipticCurvePoint.IsInfinity"/>.
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="M:EllipticCurves.EllipticCurvePoint.ToString">
             <summary>

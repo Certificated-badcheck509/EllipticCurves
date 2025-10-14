@@ -201,13 +201,10 @@ namespace EllipticCurves
         /// <summary>Typed equality (same as operator ==).</summary>
         public bool Equals(BigRational other) => this == other;
 
-        /// <summary>Boxed equality.</summary>
+        /// <inheritdoc/>
         public override bool Equals(object obj) => obj is BigRational r && Equals(r);
 
-        /// <summary>
-        /// Hash code consistent with canonical form and operator ==.
-        /// Uses a simple pair hash; stable across runs of the same framework.
-        /// </summary>
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             unchecked
