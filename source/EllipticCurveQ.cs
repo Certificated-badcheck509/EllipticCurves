@@ -17,30 +17,21 @@ namespace EllipticCurves
     ///  • a self-contained computation of torsion points over ℚ
     ///    (via Lutz–Nagell + reductions), including mapping back to the original model.
     /// </summary>
-    public sealed partial class EllipticCurveQ
+    /// <remarks>Create an elliptic curve y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6.</remarks>
+    public sealed partial class EllipticCurveQ(BigRational a1, BigRational a2, BigRational a3, BigRational a4, BigRational a6)
     {
-        /// <summary>Create an elliptic curve y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6.</summary>
-        public EllipticCurveQ(BigRational a1, BigRational a2, BigRational a3, BigRational a4, BigRational a6)
-        {
-            A1 = a1; A2 = a2; A3 = a3; A4 = a4; A6 = a6;
-        }
-
         #region Coefficients
 
         /// <summary>a1 coefficient in the general Weierstrass equation.</summary>
-        public BigRational A1 { get; }
-
+        public BigRational A1 { get; } = a1;
         /// <summary>a2 coefficient in the general Weierstrass equation.</summary>
-        public BigRational A2 { get; }
-
+        public BigRational A2 { get; } = a2;
         /// <summary>a3 coefficient in the general Weierstrass equation.</summary>
-        public BigRational A3 { get; }
-
+        public BigRational A3 { get; } = a3;
         /// <summary>a4 coefficient in the general Weierstrass equation.</summary>
-        public BigRational A4 { get; }
-
+        public BigRational A4 { get; } = a4;
         /// <summary>a6 coefficient in the general Weierstrass equation.</summary>
-        public BigRational A6 { get; }
+        public BigRational A6 { get; } = a6;
 
         #endregion
 

@@ -313,9 +313,21 @@
              • a self-contained computation of torsion points over ℚ
                (via Lutz–Nagell + reductions), including mapping back to the original model.
             </summary>
+            <remarks>Create an elliptic curve y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6.</remarks>
         </member>
         <member name="M:EllipticCurves.EllipticCurveQ.#ctor(EllipticCurves.BigRational,EllipticCurves.BigRational,EllipticCurves.BigRational,EllipticCurves.BigRational,EllipticCurves.BigRational)">
-            <summary>Create an elliptic curve y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6.</summary>
+            <summary>
+            Elliptic curve over ℚ in the general Weierstrass form
+                y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6 .
+            All coefficients are exact rationals (BigRational). This type implements:
+             • exact invariants (b2,b4,b6,b8), c4, c6, Δ, j,
+             • the general Weierstrass group law (Add/Double/Multiply),
+             • conversion to the short model y^2 = x^3 + A x + B in characteristic 0,
+             • bounded search for rational/integral points,
+             • a self-contained computation of torsion points over ℚ
+               (via Lutz–Nagell + reductions), including mapping back to the original model.
+            </summary>
+            <remarks>Create an elliptic curve y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6.</remarks>
         </member>
         <member name="P:EllipticCurves.EllipticCurveQ.A1">
             <summary>a1 coefficient in the general Weierstrass equation.</summary>
