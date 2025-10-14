@@ -11,6 +11,17 @@
 	<Authors>Valery Asiryan</Authors>
 	<Product>EllipticCurves</Product>
 	<Copyright>Valery Asiryan, © 2025</Copyright>
+	<Description>.NET library to research elliptic curves.</Description>
+	<PackageProjectUrl>https://github.com/asiryan/EllipticCurves</PackageProjectUrl>
+	<RepositoryUrl>https://github.com/asiryan/EllipticCurves</RepositoryUrl>
+	<RepositoryType>Open-source</RepositoryType>
+	<PackageTags>elliptic curves discriminant j-invariant rank torsion rational integral points Weierstrass reduction lmfdb</PackageTags>
+	<NeutralLanguage>en</NeutralLanguage>
+	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	<PackageIcon>ec_logo.png</PackageIcon>
+	<SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,5 +34,16 @@
 	<OutputPath></OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+	<None Include="LICENSE.md">
+		<Pack>True</Pack>
+		<PackagePath></PackagePath>
+	</None>
+	<None Include="ec_logo.png">
+		<Pack>True</Pack>
+		<PackagePath></PackagePath>
+	</None>
+  </ItemGroup>
 
 </Project>
