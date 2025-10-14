@@ -537,6 +537,33 @@ namespace EllipticCurves
             return sb.ToString();
         }
 
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+            return obj is EllipticCurveQ other
+                && A1 == other.A1
+                && A2 == other.A2
+                && A3 == other.A3
+                && A4 == other.A4
+                && A6 == other.A6;
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 31 + A1.GetHashCode();
+                hash = hash * 31 + A2.GetHashCode();
+                hash = hash * 31 + A3.GetHashCode();
+                hash = hash * 31 + A4.GetHashCode();
+                hash = hash * 31 + A6.GetHashCode();
+                return hash;
+            }
+        }
+
         /// <summary>Helper for ToString(): appends ± coeff*monomial, skipping zeros and eliding coeff=1 where appropriate.</summary>
         private static void AppendTerm(StringBuilder sb, BigRational coeff, string monomial)
         {
