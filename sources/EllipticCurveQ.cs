@@ -451,8 +451,7 @@ namespace EllipticCurves
         public bool IsTorsionPoint(EllipticCurvePoint P)
         {
             if (!IsOnCurve(P)) throw new ArgumentException("Point is not on this curve.", nameof(P));
-            var torsionPoints = TorsionPoints;
-            return torsionPoints.Contains(P);
+            return TorsionPoints.Contains(P);
         }
 
         /// <summary>
@@ -464,11 +463,10 @@ namespace EllipticCurves
             if (!IsOnCurve(P)) throw new ArgumentException("Point is not on this curve.", nameof(P));
             if (P.IsInfinity) return 1;
 
-            var torsionPoints = TorsionPoints;
-            if (!torsionPoints.Contains(P)) return null;
+            if (!TorsionPoints.Contains(P)) return null;
 
             var multiple = P;
-            for (int n = 1; n <= torsionPoints.Count(); n++)
+            for (int n = 1; n <= TorsionPoints.Count(); n++)
             {
                 if (multiple.IsInfinity) return n;
                 multiple = Add(multiple, P);
