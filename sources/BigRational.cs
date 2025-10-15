@@ -187,6 +187,30 @@ namespace EllipticCurves
         /// <summary>Greater-than or equal (exact order on ℚ; cross-products).</summary>
         public static bool operator >=(BigRational a, BigRational b) => a.CompareTo(b) >= 0;
 
+        /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        public static implicit operator BigRational(long value) => new BigRational(value, 0);
+
+        /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        public static implicit operator BigRational(ulong value) => new BigRational(value, 0);
+
+        /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        public static implicit operator BigRational(short value) => new BigRational(value, 0);
+
+        /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        public static implicit operator BigRational(ushort value) => new BigRational(value, 0);
+
+        /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        public static implicit operator BigRational(int value) => new BigRational(value, 0);
+
+        /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        public static implicit operator BigRational(uint value) => new BigRational(value, 0);
+
+        /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        public static implicit operator BigRational(byte value) => new BigRational(value, 0);
+
+        /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        public static implicit operator BigRational(sbyte value) => new BigRational(value, 0);
+
         /// <summary>
         /// Lexicographic-free comparison via cross-multiplication:
         /// compare Num/Den and other.Num/other.Den exactly.

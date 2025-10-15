@@ -128,6 +128,30 @@
         <member name="M:EllipticCurves.BigRational.op_GreaterThanOrEqual(EllipticCurves.BigRational,EllipticCurves.BigRational)">
             <summary>Greater-than or equal (exact order on ℚ; cross-products).</summary>
         </member>
+        <member name="M:EllipticCurves.BigRational.op_Implicit(System.Int64)~EllipticCurves.BigRational">
+            <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_Implicit(System.UInt64)~EllipticCurves.BigRational">
+            <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_Implicit(System.Int16)~EllipticCurves.BigRational">
+            <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_Implicit(System.UInt16)~EllipticCurves.BigRational">
+            <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_Implicit(System.Int32)~EllipticCurves.BigRational">
+            <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_Implicit(System.UInt32)~EllipticCurves.BigRational">
+            <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_Implicit(System.Byte)~EllipticCurves.BigRational">
+            <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        </member>
+        <member name="M:EllipticCurves.BigRational.op_Implicit(System.SByte)~EllipticCurves.BigRational">
+            <summary>Defines an implicit conversion of a number to BigRational.</summary>
+        </member>
         <member name="M:EllipticCurves.BigRational.CompareTo(EllipticCurves.BigRational)">
             <summary>
             Lexicographic-free comparison via cross-multiplication:
