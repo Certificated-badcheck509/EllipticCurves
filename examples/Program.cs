@@ -5,13 +5,7 @@ public static class Program
     public static void Main()
     {
         // Y^2 = X^3- 17 X^2 + 72 X
-        var E = new EllipticCurveQ(
-            new BigRational(0),   // a1
-            new BigRational(-17), // a2
-            new BigRational(0),   // a3
-            new BigRational(72),  // a4
-            new BigRational(0)    // a6
-        );
+        var E = new EllipticCurveQ(0, -17, 0, 72, 0);
 
         Console.WriteLine("E: " + E);
         Console.WriteLine($"Short Weierstrass: {E.ShortWeierstrass}");
