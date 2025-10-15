@@ -188,28 +188,28 @@ namespace EllipticCurves
         public static bool operator >=(BigRational a, BigRational b) => a.CompareTo(b) >= 0;
 
         /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
-        public static implicit operator BigRational(long value) => new BigRational(value, 0);
+        public static implicit operator BigRational(long value) => new BigRational(value, 1);
 
         /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
-        public static implicit operator BigRational(ulong value) => new BigRational(value, 0);
+        public static implicit operator BigRational(ulong value) => new BigRational(value, 1);
 
         /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
-        public static implicit operator BigRational(short value) => new BigRational(value, 0);
+        public static implicit operator BigRational(short value) => new BigRational(value, 1);
 
         /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
-        public static implicit operator BigRational(ushort value) => new BigRational(value, 0);
+        public static implicit operator BigRational(ushort value) => new BigRational(value, 1);
 
         /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
-        public static implicit operator BigRational(int value) => new BigRational(value, 0);
+        public static implicit operator BigRational(int value) => new BigRational(value, 1);
 
         /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
-        public static implicit operator BigRational(uint value) => new BigRational(value, 0);
+        public static implicit operator BigRational(uint value) => new BigRational(value, 1);
 
         /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
-        public static implicit operator BigRational(byte value) => new BigRational(value, 0);
+        public static implicit operator BigRational(byte value) => new BigRational(value, 1);
 
         /// <summary>Defines an implicit conversion of a number to BigRational.</summary>
-        public static implicit operator BigRational(sbyte value) => new BigRational(value, 0);
+        public static implicit operator BigRational(sbyte value) => new BigRational(value, 1);
 
         /// <summary>
         /// Lexicographic-free comparison via cross-multiplication:
