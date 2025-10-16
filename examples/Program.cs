@@ -26,7 +26,7 @@ public static class Program
         var E_LMFDB = new EllipticCurveLMFDB(E);
         Console.WriteLine($"LMFDB: {E_LMFDB.Label}");
         Console.WriteLine($"Url: {E_LMFDB.Url}");
-        Console.WriteLine($"Mininal Weirstrass model: {E_LMFDB.GlobalMinimalModel}");
+        Console.WriteLine($"Minimal Weirstrass model: {E_LMFDB.GlobalMinimalModel}");
         Console.WriteLine($"Torsion: {E_LMFDB.TorsionStructure}");
         Console.WriteLine($"Rank(E) = {E_LMFDB.Rank}");
         Console.WriteLine($"Analytic rank(E) = {E_LMFDB.AnalyticRank}");
