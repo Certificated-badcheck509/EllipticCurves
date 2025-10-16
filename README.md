@@ -47,7 +47,7 @@ O
 (12, -12)
 LMFDB: 48.a3
 Url: https://www.lmfdb.org/EllipticCurve/Q/48.a3/
-Mininal Weirstrass model: y^2 = x^3 + x^2 - 24*x + 36
+Minimal Weirstrass model: y^2 = x^3 + x^2 - 24*x + 36
 Torsion: Z/2Z x Z/4Z
 Rank(E) = 0
 Analytic rank(E) = 0
